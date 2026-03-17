@@ -346,8 +346,8 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate }) 
         {/* Nav */}
         <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-8 md:px-16 py-6 bg-[#020c1b]/60 backdrop-blur-xl border-b border-[#64ffda]/10">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => { setView('ROAD'); scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            <div className="w-10 h-10 bg-[#64ffda] rounded-xl flex items-center justify-center font-bold text-[#020c1b] group-hover:scale-110 transition-transform">B</div>
-            <span className="font-sans font-bold text-white tracking-[0.3em] text-[10px] uppercase">Business Elite</span>
+            <div className="w-10 h-10 bg-[#64ffda] rounded-xl flex items-center justify-center font-bold text-[#020c1b] group-hover:scale-110 transition-transform">U</div>
+            <span className="font-sans font-bold text-white tracking-[0.3em] text-[10px] uppercase">Upgrade with AI </span>
           </div>
           <div className="flex items-center gap-10">
             <div className="hidden md:flex gap-10 text-white text-[10px] font-black tracking-[0.4em] uppercase">
