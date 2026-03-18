@@ -186,7 +186,7 @@ function DiamondCore({ scrollProgress }) {
   );
 }
 
-function PremiumScene({ scrollProgress }) {
+function PremiumScene({ scrollProgress, view }) {
   const masterGroup = useRef();
 
   useFrame((state, delta) => {
@@ -196,21 +196,27 @@ function PremiumScene({ scrollProgress }) {
     if (masterGroup.current) {
       masterGroup.current.rotation.y = t * 0.05;
 
-      if (sp < 0.2) {
-        masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 0, 0.03);
-        masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, 0, 0.03);
-        masterGroup.current.position.z = THREE.MathUtils.lerp(masterGroup.current.position.z, 0, 0.03);
-      } else if (sp < 0.4) {
-        masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 12, 0.04);
-      } else if (sp < 0.6) {
-        masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, 15, 0.04);
-        masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 0, 0.03);
-      } else if (sp < 0.8) {
-        masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, -5, 0.03);
-        masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, -12, 0.04);
+      if (view !== 'ROAD') {
+        masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 0, 0.02);
+        masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, 2, 0.02);
+        masterGroup.current.position.z = THREE.MathUtils.lerp(masterGroup.current.position.z, -10, 0.02);
       } else {
-        masterGroup.current.position.z = THREE.MathUtils.lerp(masterGroup.current.position.z, 50, 0.03);
-        masterGroup.current.rotation.z += delta * 1;
+        if (sp < 0.2) {
+          masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 0, 0.03);
+          masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, 0, 0.03);
+          masterGroup.current.position.z = THREE.MathUtils.lerp(masterGroup.current.position.z, 0, 0.03);
+        } else if (sp < 0.4) {
+          masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 12, 0.04);
+        } else if (sp < 0.6) {
+          masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, 15, 0.04);
+          masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, 0, 0.03);
+        } else if (sp < 0.8) {
+          masterGroup.current.position.y = THREE.MathUtils.lerp(masterGroup.current.position.y, -5, 0.03);
+          masterGroup.current.position.x = THREE.MathUtils.lerp(masterGroup.current.position.x, -12, 0.04);
+        } else {
+          masterGroup.current.position.z = THREE.MathUtils.lerp(masterGroup.current.position.z, 50, 0.03);
+          masterGroup.current.rotation.z += delta * 1;
+        }
       }
     }
   });
@@ -222,7 +228,7 @@ function PremiumScene({ scrollProgress }) {
   );
 }
 
-function Scene3D({ scrollProgress }) {
+function Scene3D({ scrollProgress, view }) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
@@ -234,7 +240,7 @@ function Scene3D({ scrollProgress }) {
       <pointLight position={[-20, -20, -10]} intensity={3} color={ACCENT_COLOR} distance={80} />
       <pointLight position={[0, 0, 20]} intensity={1} color="#ffffff" distance={40} />
       
-      <PremiumScene scrollProgress={scrollProgress} />
+      <PremiumScene scrollProgress={scrollProgress} view={view} />
       
       <Sparkles count={600} scale={[80, 80, 80]} size={1.5} speed={0.3} color={ACCENT_COLOR} />
       
@@ -347,19 +353,26 @@ function ColorGradingOverlay() {
 }
 
 // ─── Depth Zoom Section Wrapper ───
-function AdvancedSection({ children, progress, start, end, isLast = false }) {
+function AdvancedSection({ children, progress, start, end, isLast = false, noCard = false }) {
   const duration = end - start;
   const p1 = start;
   const p2 = start + duration * 0.15; 
   const p3 = start + duration * 0.85; 
   const p4 = end;
 
-  // Depth Zoom method: sections scale from small/blurry to full, then zoom past camera
-  const scale = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [0.6, 1, 1, isLast ? 1 : 1.4]);
+  // Hyper-Cinematic Depth Zoom
+  const scale = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [0.4, 1, 1, isLast ? 1 : 1.8]);
   const opacity = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [0, 1, 1, isLast ? 1 : 0]);
-  const y = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], ["80px", "0px", "0px", isLast ? "0px" : "-80px"]);
-  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [8, 0, 0, isLast ? 0 : 8]);
+  const y = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], ["150px", "0px", "0px", isLast ? "0px" : "-150px"]);
+  const rotateY = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [25, 0, 0, isLast ? 0 : -25]);
+  const rotateX = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [-20, 0, 0, isLast ? 0 : 20]);
+  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [12, 0, 0, isLast ? 0 : 12]);
   const filterBlur = useTransform(blur, (v) => `blur(${v}px)`);
+
+  const pointerEvents = useTransform(progress, (v) => {
+    if (isLast) return v >= p1 - 0.05 ? "auto" : "none";
+    return (v >= p1 - 0.05 && v <= p4 + 0.05) ? "auto" : "none";
+  });
 
   return (
     <motion.div
@@ -367,21 +380,29 @@ function AdvancedSection({ children, progress, start, end, isLast = false }) {
         opacity, 
         scale,
         y,
+        rotateX,
+        rotateY,
         filter: filterBlur,
+        transformPerspective: 2000
       }}
-      className="absolute inset-0 flex items-center justify-center p-8 z-20 pointer-events-none"
+      className="absolute inset-0 flex items-center justify-center p-4 md:p-8 z-20 pointer-events-none"
     >
-      <div className="w-full h-full pointer-events-auto flex flex-col items-center justify-center text-center">
-        <motion.div 
-            style={{ 
-              transformStyle: "preserve-3d",
-              boxShadow: "0 100px 200px rgba(0,0,0,0.8)"
-            }}
-            className="w-full max-w-4xl bg-white/[0.01] backdrop-blur-[30px] border border-white/10 rounded-[40px] p-8 md:p-16"
-        >
-            {children}
-        </motion.div>
-      </div>
+      <motion.div 
+        style={{ pointerEvents }}
+        className="w-full h-full flex flex-col items-center justify-center text-center"
+      >
+        {noCard ? children : (
+          <motion.div 
+              style={{ 
+                transformStyle: "preserve-3d",
+                boxShadow: "0 100px 200px rgba(0,0,0,0.8)"
+              }}
+              className="w-full max-w-4xl bg-gradient-to-br from-white/[0.05] to-white/[0.01] backdrop-blur-[30px] border border-white/20 rounded-[24px] md:rounded-[40px] p-6 md:p-16 shadow-[0_0_50px_rgba(230,57,70,0.05)]"
+          >
+              {children}
+          </motion.div>
+        )}
+      </motion.div>
     </motion.div>
   );
 }
@@ -420,7 +441,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
         {/* ── Immersive 3D Engine ── */}
         <div className="absolute inset-0 z-0">
           <Canvas dpr={[1, 2]}>
-            <Scene3D scrollProgress={smoothProgress} />
+            <Scene3D scrollProgress={smoothProgress} view={view} />
           </Canvas>
         </div>
 
@@ -428,31 +449,32 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
       <ColorGradingOverlay />
 
       {/* ── Data Diagrams ── */}
-      <DataDiagramsOverlay />
+      {view === 'ROAD' && <DataDiagramsOverlay />}
 
       {/* ── Navigation ── */}
-      <nav className="absolute top-0 w-full flex items-center justify-between px-12 py-10 z-[100]">
-          <div className="flex items-center gap-5 cursor-pointer group" onClick={() => setView('ROAD')}>
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#e63946] to-[#ff8e3c] flex items-center justify-center shadow-[0_0_40px_rgba(230,57,70,0.4)] group-hover:rotate-[360deg] transition-all duration-1000">
-                  <span className="text-white font-black text-3xl italic">U</span>
-              </div>
-              <div className="flex flex-col">
-                  <span className="font-wide font-black tracking-tighter text-2xl leading-none uppercase">Upgrade with<span className="text-[#e63946]"> AI</span></span>
-                  <span className="text-[10px] tracking-[0.5em] text-slate-500 font-black uppercase mt-1">Transcendent Tech </span>
-              </div>
+      <nav className="absolute top-0 w-full flex items-center justify-between px-6 py-6 md:px-12 md:py-10 z-[100] pointer-events-auto">
+          <div className="flex flex-col cursor-pointer z-50 group origin-left hover:scale-105 transition-all duration-500" onClick={() => setView('ROAD')}>
+              <h1 className="font-wide text-lg md:text-3xl font-black tracking-tighter text-white drop-shadow-sm whitespace-nowrap uppercase">
+                  UPGRADE WITH<span className="text-[#e63946] italic"> AI</span>
+              </h1>
+              <h2 className="text-[7px] md:text-[10px] font-sans tracking-[0.25em] md:tracking-[0.3em] mt-1 uppercase font-medium text-slate-400">
+                  High-Performance Web & Intelligent Solutions
+              </h2>
           </div>
-          <div className="flex items-center gap-12">
-              <div className="hidden lg:flex gap-12">
-                  {['ROAD', 'PRICING', 'CONTACT'].map(item => (
-                      <button key={item} onClick={() => setView(item)} className="text-[10px] font-black tracking-[0.3em] uppercase transition-all hover:text-[#e63946] flex flex-col items-center group">
-                          {item === 'ROAD' ? 'Root' : item}
-                          <div className={`h-[1px] bg-[#e63946] transition-all duration-500 ${view === item ? 'w-full' : 'w-0 group-hover:w-full'} mt-1`} />
-                      </button>
-                  ))}
-              </div>
+          <div className="flex items-center gap-6 md:gap-12 z-[110]">
               <ExploreDropdown activeTemplate={activeTemplate} setActiveTemplate={setActiveTemplate} />
           </div>
       </nav>
+
+      {/* ── Floating Nav ── */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:top-10 md:bottom-auto z-[150] flex gap-6 md:gap-12 bg-[#020308]/80 backdrop-blur-xl px-6 py-4 md:px-8 md:py-4 rounded-full border border-white/10 pointer-events-auto">
+          {['ROAD', 'PRICING', 'CONTACT'].map(item => (
+              <button key={item} onClick={() => setView(item)} className="text-[10px] font-black tracking-[0.3em] uppercase transition-all hover:text-[#e63946] flex flex-col items-center group text-white">
+                  {item === 'ROAD' ? 'Root' : item}
+                  <div className={`h-[1px] bg-[#e63946] transition-all duration-500 ${view === item ? 'w-full' : 'w-0 group-hover:w-full'} mt-1 flex-shrink-0`} />
+              </button>
+          ))}
+      </div>
 
       {/* ── Main Content Engine ── */}
       <div className="w-full h-full relative z-10">
@@ -460,9 +482,24 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               {view === 'ROAD' && (
                   <motion.div key="road" className="absolute inset-0">
                       
+                      {/* Section 00: Scroll To Explore */}
+                      <AdvancedSection progress={smoothProgress} start={0} end={0.15} noCard={true}>
+                        <div className="flex flex-col items-center justify-center">
+                           <motion.div 
+                             initial={{ opacity: 0, y: 10 }} 
+                             animate={{ opacity: 1, y: 0 }} 
+                             transition={{ delay: 1, duration: 2 }}
+                             className="text-white/60 font-wide tracking-[0.4em] text-[10px] md:text-xs uppercase flex flex-col items-center"
+                           >
+                              <span className="mb-6">Scroll to explore</span>
+                              <div className="w-[2px] h-24 bg-gradient-to-b from-[#e63946] to-transparent animate-bounce"></div>
+                           </motion.div>
+                        </div>
+                      </AdvancedSection>
+
                       {/* Section 01: Hero */}
-                      <AdvancedSection progress={smoothProgress} start={0} end={0.2}>
-                          <span className="text-[#e63946] font-wide text-[10px] tracking-[0.8em] uppercase mb-6 block font-black">Singularity Core</span>
+                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35}>
+                          <span className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.8em] uppercase mb-6 block font-black">Singularity Core</span>
                           <h1 className="text-3xl md:text-5xl font-wide font-black tracking-tighter leading-[0.85] mb-8 italic">
                                HYPER <br/>
                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] via-[#ff8e3c] to-[#ffffff]">ELITE</span>
@@ -476,30 +513,30 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 02: About */}
-                      <AdvancedSection progress={smoothProgress} start={0.2} end={0.4}>
-                          <h2 className="text-[#e63946] font-wide text-[10px] tracking-[0.6em] uppercase mb-10 font-black">Visionary Authority</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-10 font-black">Visionary Authority</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                               <div className="text-left">
                                   <p className="text-2xl md:text-4xl font-black mb-6 leading-[1.1] tracking-tighter uppercase italic">
                                       Defying the <br/>
                                       <span className="text-[#ff8e3c]">Gravity of Norm.</span>
                                   </p>
-                                  <div className="text-slate-500 text-sm leading-relaxed space-y-3">
+                                  <div className="text-slate-300 text-sm leading-relaxed space-y-3">
                                       <p>Upgrade ELITE represents the apex of digital engineering — every line of code optimized for extreme velocity and visual impact.</p>
-                                      <p className="text-xs text-slate-600">Our elite squad of 15+ senior architects specializes in bleeding-edge tech that most agencies won't touch: WebGL, Three.js, real-time AI, and immersive experiences.</p>
+                                      <p className="text-xs text-slate-400">Our elite squad of 15+ senior architects specializes in bleeding-edge tech that most agencies won't touch: WebGL, Three.js, real-time AI, and immersive experiences.</p>
                                   </div>
                               </div>
                               <div className="grid grid-cols-2 gap-3">
                                   {[
-                                      { t: "Speed Index", i: "🏎️", d: "0.8s LCP Score", bg: "rgba(230,57,70,0.06)" },
-                                      { t: "Neural AI", i: "🧪", d: "GPT-4 Integrated", bg: "rgba(255,142,60,0.06)" },
-                                      { t: "Global CDN", i: "🛰️", d: "140+ Edge Nodes", bg: "rgba(168,85,247,0.06)" },
-                                      { t: "Pixel Perfect", i: "💎", d: "Award-Level UX", bg: "rgba(244,114,182,0.06)" }
+                                      { t: "Speed Index", i: "🏎️", d: "0.8s LCP Score", bg: "rgba(230,57,70,0.15)" },
+                                      { t: "Neural AI", i: "🧪", d: "GPT-4 Integrated", bg: "rgba(255,142,60,0.15)" },
+                                      { t: "Global CDN", i: "🛰️", d: "140+ Edge Nodes", bg: "rgba(168,85,247,0.15)" },
+                                      { t: "Pixel Perfect", i: "💎", d: "Award-Level UX", bg: "rgba(244,114,182,0.15)" }
                                   ].map((item, idx) => (
-                                      <div key={idx} style={{ background: item.bg }} className="border border-white/5 p-4 rounded-[18px] backdrop-blur-md group hover:border-[#e63946]/50 transition-all text-left">
+                                      <div key={idx} style={{ background: item.bg }} className="border border-white/20 p-4 rounded-[18px] backdrop-blur-md group hover:border-[#e63946]/50 transition-all text-left">
                                           <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">{item.i}</div>
-                                          <h4 className="text-[9px] font-black uppercase tracking-widest text-white mb-1">{item.t}</h4>
-                                          <p className="text-[7px] text-slate-500 font-bold uppercase">{item.d}</p>
+                                          <h4 className="text-xs font-black uppercase tracking-widest text-white mb-1">{item.t}</h4>
+                                          <p className="text-[10px] text-slate-300 font-bold uppercase">{item.d}</p>
                                       </div>
                                   ))}
                               </div>
@@ -507,41 +544,41 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 03: Metrics */}
-                      <AdvancedSection progress={smoothProgress} start={0.4} end={0.6}>
-                          <h2 className="text-[#e63946] font-wide text-[10px] tracking-[0.6em] uppercase mb-12 font-black">Operation Stats</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Operation Stats</h2>
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl mx-auto">
                               {[
-                                  { v: "0.8s", l: "LCP SCORE", ic: "📱", sub: "Lighthouse 100", bg: "rgba(230,57,70,0.07)" },
-                                  { v: "99.9%", l: "UPTIME SLA", ic: "🟢", sub: "Enterprise grade", bg: "rgba(255,142,60,0.07)" },
-                                  { v: "140+", l: "EDGE NODES", ic: "🌐", sub: "Global CDN mesh", bg: "rgba(168,85,247,0.07)" },
-                                  { v: "4.8M", l: "DAILY HITS", ic: "📈", sub: "Peak traffic handled", bg: "rgba(251,191,36,0.07)" }
+                                  { v: "0.8s", l: "LCP SCORE", ic: "📱", sub: "Lighthouse 100", bg: "rgba(230,57,70,0.15)" },
+                                  { v: "99.9%", l: "UPTIME SLA", ic: "🟢", sub: "Enterprise grade", bg: "rgba(255,142,60,0.15)" },
+                                  { v: "140+", l: "EDGE NODES", ic: "🌐", sub: "Global CDN mesh", bg: "rgba(168,85,247,0.15)" },
+                                  { v: "4.8M", l: "DAILY HITS", ic: "📈", sub: "Peak traffic handled", bg: "rgba(251,191,36,0.15)" }
                               ].map((m, i) => (
-                                  <div key={i} style={{ background: m.bg }} className="p-6 border border-white/5 rounded-[25px] group hover:border-[#e63946]/30 transition-all">
+                                  <div key={i} style={{ background: m.bg }} className="p-6 border border-white/20 rounded-[25px] group hover:border-[#e63946]/50 transition-all">
                                       <div className="text-xl mb-2">{m.ic}</div>
                                       <div className="text-3xl font-black mb-2 group-hover:scale-110 transition-transform">{m.v}</div>
-                                      <div className="text-[8px] font-black tracking-[0.4em] text-[#e63946] uppercase">{m.l}</div>
-                                      <div className="text-[7px] text-slate-500 mt-1 font-bold uppercase">{m.sub}</div>
+                                      <div className="text-[10px] font-black tracking-[0.4em] text-[#ff8e3c] uppercase">{m.l}</div>
+                                      <div className="text-[9px] text-slate-300 mt-1 font-bold uppercase">{m.sub}</div>
                                   </div>
                               ))}
                           </div>
                       </AdvancedSection>
 
                       {/* Section 04: Services */}
-                      <AdvancedSection progress={smoothProgress} start={0.6} end={0.8}>
-                          <h2 className="text-[#e63946] font-wide text-[9px] tracking-[0.6em] uppercase mb-12 font-black">Capabilities</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Capabilities</h2>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
                               {servicesData.map((s, i) => (
-                                  <div key={i} style={{ background: s.color }} className="p-5 border border-white/5 flex flex-col items-center rounded-[24px] hover:border-[#e63946]/50 group transition-all">
+                                  <div key={i} style={{ background: s.color.replace('0.06', '0.15') }} className="p-5 border border-white/20 flex flex-col items-center rounded-[24px] hover:border-[#e63946]/50 group transition-all">
                                       <div className="text-3xl mb-3 group-hover:rotate-12 transition-transform">{s.icon}</div>
-                                      <h4 className="font-black text-[9px] tracking-widest uppercase text-white mb-1">{s.title}</h4>
-                                      <p className="text-[7px] text-slate-500 font-bold uppercase leading-relaxed text-center">{s.desc}</p>
+                                      <h4 className="font-black text-xs tracking-widest uppercase text-white mb-2">{s.title}</h4>
+                                      <p className="text-[10px] text-slate-300 font-bold uppercase leading-relaxed text-center">{s.desc}</p>
                                   </div>
                               ))}
                           </div>
                       </AdvancedSection>
 
                       {/* Section 05: Final */}
-                      <AdvancedSection progress={smoothProgress} start={0.8} end={1.0} isLast={true}>
+                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isLast={true}>
                           <h2 className="text-3xl md:text-6xl font-black mb-10 uppercase italic tracking-tighter leading-none">
                                VOID <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] to-[#ff8e3c]">INIT.</span>
                           </h2>
@@ -552,10 +589,12 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                               </div>
                               {/* VISIT AGAIN BUTTON - MEDIUM SCALE */}
                               <button 
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
-                                className="group flex flex-col items-center gap-2 transition-all"
+                                className="group flex flex-col items-center gap-2 transition-all relative z-[100]"
                               >
                                 <div className="w-12 h-12 border border-[#e63946] rounded-full bg-[#e63946]/5 flex items-center justify-center group-hover:bg-[#e63946] group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(230,57,70,0.15)]">
                                     <span className="text-sm text-white rotate-[-90deg] block">➔</span>
@@ -569,19 +608,19 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               )}
 
               {view === 'PRICING' && (
-                  <motion.div key="pricing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center p-8 bg-[#020308]/95 backdrop-blur-3xl overflow-y-auto">
-                       <div className="w-full max-w-4xl py-32">
-                          <h2 className="text-3xl font-black mb-16 uppercase italic tracking-tighter">ELITE <span className="text-[#e63946]">VALUE.</span></h2>
+                  <motion.div key="pricing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
+                       <div className="w-full max-w-4xl pt-32 md:pt-40 px-4 md:px-0 pb-32">
+                          <h2 className="text-2xl md:text-3xl font-black mb-10 md:mb-16 uppercase italic tracking-tighter">ELITE <span className="text-[#e63946]">VALUE.</span></h2>
                           <div className="grid gap-4">
                               {[
                                 { t: "CORE FRAME", p: "₹18,999", d: "Standard high-fidelity portfolio." },
                                 { t: "NEURAL NODE", p: "CUSTOM", d: "Advanced AI web applications." },
                                 { t: "ENTERPRISE GRID", p: "QUOTE", d: "Scalable global architecture." }
                               ].map((p, i) => (
-                                  <motion.div key={i} className="p-8 bg-white/[0.02] border border-white/5 rounded-[30px] flex items-center justify-between group hover:border-[#e63946]/50 transition-all cursor-pointer" onClick={() => window.open(`https://wa.me/918825802060`)}>
+                                  <motion.div key={i} className="p-6 md:p-8 bg-white/[0.02] border border-white/5 rounded-[24px] md:rounded-[30px] flex flex-col md:flex-row items-start md:items-center justify-between group hover:border-[#e63946]/50 transition-all cursor-pointer gap-4 md:gap-0" onClick={() => window.open(`https://wa.me/918825802060`)}>
                                       <div className="text-left">
-                                          <h3 className="text-2xl font-black uppercase group-hover:text-[#e63946] transition-colors tracking-tighter">{p.t}</h3>
-                                          <p className="text-slate-500 mt-1 text-sm">{p.d}</p>
+                                          <h3 className="text-xl md:text-2xl font-black uppercase group-hover:text-[#e63946] transition-colors tracking-tighter">{p.t}</h3>
+                                          <p className="text-slate-500 mt-1 text-xs md:text-sm">{p.d}</p>
                                       </div>
                                       <div className="text-right">
                                           <div className="text-2xl font-black text-white mb-1">{p.p}</div>
@@ -595,17 +634,17 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               )}
 
               {view === 'CONTACT' && (
-                  <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-center justify-center p-8 bg-[#020308]/95 backdrop-blur-3xl">
-                       <div className="text-center">
-                           <h2 className="text-3xl md:text-6xl font-black mb-16 uppercase italic tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-tr from-[#ff8e3c] to-[#e63946]">SECURE <br/> LINK.</h2>
-                           <div className="flex gap-8 justify-center">
-                               <a href="https://wa.me/918825802060" className="p-12 border border-white/5 bg-white/[0.01] rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
-                                   <span className="text-5xl mb-4 block group-hover:scale-110 transition-transform">💬</span>
-                                   <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Wireless Protocol</span>
+                  <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
+                       <div className="text-center px-4 w-full pt-32 md:pt-40 pb-32">
+                           <h2 className="text-3xl md:text-6xl font-black mb-10 md:mb-16 uppercase italic tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-tr from-[#ff8e3c] to-[#e63946]">SECURE <br/> LINK.</h2>
+                           <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center">
+                               <a href="https://wa.me/918825802060" className="p-8 md:p-12 border border-white/5 bg-white/[0.01] rounded-[30px] md:rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
+                                   <span className="text-4xl md:text-5xl mb-4 block group-hover:scale-110 transition-transform">💬</span>
+                                   <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Wireless Protocol</span>
                                </a>
-                               <a href="mailto:admin@upgradewithaifolks.com" className="p-12 border border-white/5 bg-white/[0.01] rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
-                                   <span className="text-5xl mb-4 block group-hover:scale-110 transition-transform">📧</span>
-                                   <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Secure Inquiry</span>
+                               <a href="mailto:admin@upgradewithaifolks.com" className="p-8 md:p-12 border border-white/5 bg-white/[0.01] rounded-[30px] md:rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
+                                   <span className="text-4xl md:text-5xl mb-4 block group-hover:scale-110 transition-transform">📧</span>
+                                   <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Secure Inquiry</span>
                                </a>
                            </div>
                        </div>
@@ -615,13 +654,13 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
       </div>
 
       {/* ── Metadata Overlay ── */}
-      <div className="absolute bottom-12 left-16 flex items-center gap-10 z-[100] pointer-events-none opacity-40">
-          <div className="flex items-center gap-4">
+      <div className="absolute bottom-24 left-6 md:bottom-12 md:left-16 flex items-center gap-6 md:gap-10 z-[50] pointer-events-none opacity-40">
+          <div className="flex items-center gap-2 md:gap-4">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em]">System.Active</span>
+              <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em]">System.Active</span>
           </div>
           <div className="w-[1px] h-4 bg-white/20" />
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] italic">ELITE v4.0.0</span>
+          <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em] italic">ELITE v4.0.0</span>
       </div>
       </motion.div>
     </>

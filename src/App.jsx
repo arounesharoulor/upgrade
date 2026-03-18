@@ -14,11 +14,13 @@ function App() {
   const { scrollYProgress } = useScroll();
 
   useEffect(() => {
-    // Scroll to top when view changes away from road
-    if (view !== 'ROAD') {
-      window.scrollTo(0, 0);
-    }
-  }, [view]);
+    // Reset window scroll position when view or template changes,
+    // ensuring we don't land on the bottom of a new template.
+    // Using setTimeout to guarantee the DOM height expands to 600vh before scrolling.
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, 10);
+  }, [view, activeTemplate]);
 
   return (
     <div className={`w-full ${(view === 'ROAD' && (activeTemplate === 'client' || activeTemplate === 'premium')) ? 'h-[600vh]' : 'h-screen overflow-hidden'}`}>

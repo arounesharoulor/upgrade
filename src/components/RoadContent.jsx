@@ -31,14 +31,14 @@ function ScrollSection({ progress, start, end, title, children }) {
     >
        <motion.h2 
           style={{ opacity: titleOpacity, scale: titleScale }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-wide font-bold text-3xl md:text-5xl lg:text-7xl tracking-wider text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] z-20 w-full"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-wide font-bold text-3xl md:text-5xl lg:text-7xl tracking-wider text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] z-20 w-full px-4"
        >
           {title}
        </motion.h2>
        
        <motion.div
           style={{ opacity: detailOpacity, scale: detailScale, pointerEvents }}
-          className="w-full max-w-6xl text-center z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[85vh] overflow-y-auto hide-scrollbar"
+          className="w-full px-4 md:px-8 max-w-6xl text-center z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[85vh] overflow-y-auto hide-scrollbar"
        >
           {children}
        </motion.div>

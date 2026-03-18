@@ -51,7 +51,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
 
         {/* ── Left: Logo / Brand ── */}
         <motion.div 
-          className="flex flex-col cursor-pointer" 
+          className="flex flex-col cursor-pointer z-50" 
           onClick={() => setView('ROAD')}
           style={{
             x: view === 'ROAD' ? scrollX : "0px",
@@ -71,23 +71,23 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
           >
               <motion.h1 
                 style={{ color: '#ffffff', textAlign: view === 'ROAD' ? textAlign : "left" }}
-                className="font-wide text-3xl md:text-5xl font-bold tracking-tighter hover:opacity-80 transition-opacity drop-shadow-sm w-full whitespace-nowrap"
+                className="font-wide text-2xl md:text-4xl font-bold tracking-tighter hover:opacity-80 transition-opacity drop-shadow-sm w-full whitespace-nowrap"
               >
-                 UPGRADE WITH AI
+              UPGRADE WITH AI
               </motion.h1>
               <motion.h2 
                 style={{ color: '#94a3b8', textAlign: view === 'ROAD' ? textAlign : "left" }}
                 className="text-xs md:text-sm font-sans tracking-[0.2em] mt-2 uppercase font-medium w-full"
               >
-                 High-Performance Web &amp; Intelligent Solutions
+              High-Performance Web &amp; Intelligent Solutions
               </motion.h2>
           </motion.div>
         </motion.div>
 
         {/* ── Center: Navigation ── */}
         <motion.nav
-          className="absolute left-1/2 top-0 flex items-center gap-8 md:gap-12"
-          style={{ transform: 'translateX(-50%)' }}
+          className="fixed bottom-6 left-1/2 flex items-center gap-6 md:gap-12 bg-black/60 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none px-6 py-4 md:p-0 rounded-full md:rounded-none md:absolute md:top-0 md:bottom-auto pointer-events-auto border border-white/10 md:border-none z-[100]"
+          style={{ x: "-50%" }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.8, duration: 0.6, ease: 'easeOut' }}
@@ -100,7 +100,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                 setView(item);
                 if (item !== 'ROAD') window.scrollTo(0, 0);
               }}
-              className={`nav-link ${view === item ? 'active text-2xl scale-[1.12]' : ''}`}
+              className={`nav-link text-white text-xs md:text-sm tracking-widest ${view === item ? 'active text-sm md:text-2xl scale-[1.12]' : ''}`}
             >
               {item}
             </div>
@@ -109,7 +109,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
 
         {/* ── Right: Explore Dropdown ── */}
         <motion.div
-          className="flex items-center"
+          className="flex items-center z-50 pointer-events-auto"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 2.0, duration: 0.6, ease: 'easeOut' }}
@@ -128,11 +128,11 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                     animate={{ opacity: 1, y: 0 }} 
                     exit={{ opacity: 0, y: -30 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="w-full max-w-6xl h-full flex flex-col pointer-events-auto pt-4 px-4 pb-20 overflow-y-auto hide-scrollbar"
+                    className="w-full max-w-6xl h-full flex flex-col pointer-events-auto pt-10 md:pt-4 px-4 pb-24 overflow-y-auto hide-scrollbar"
                 >
-                    <div className="mb-10 w-full">
-                        <h3 className="text-blue-400 font-wide text-4xl mb-4 tracking-wider">MODULAR PRICING TIERS</h3>
-                        <p className="text-lg font-sans text-slate-300 max-w-4xl leading-relaxed">
+                    <div className="mb-8 md:mb-10 w-full mt-10 md:mt-0">
+                        <h3 className="text-blue-400 font-wide text-3xl md:text-4xl mb-4 tracking-wider">MODULAR PRICING TIERS</h3>
+                        <p className="text-sm md:text-lg font-sans text-slate-300 max-w-4xl leading-relaxed">
                             Whether you need a high-impact presence or a massive database-driven platform intertwined with an enterprise LLM, we deliver uncompromising quality at fair prices. Every plan is meticulously engineered and includes post-launch technical support to guarantee a smooth transition into production. Prices strictly depend on system complexity and operational scope.
                         </p>
                     </div>
@@ -173,11 +173,11 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                     animate={{ opacity: 1, scale: 1 }} 
                     exit={{ opacity: 0, scale: 1.05 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="max-w-5xl w-full mx-auto pointer-events-auto h-full overflow-y-auto hide-scrollbar pt-10 pb-20 px-4 flex flex-col items-center"
+                    className="max-w-5xl w-full mx-auto pointer-events-auto h-full overflow-y-auto hide-scrollbar pt-16 md:pt-10 pb-24 px-4 flex flex-col items-center"
                 >
-                    <div className="text-center w-full mb-12">
-                        <h3 className="text-emerald-400 font-wide font-bold text-4xl md:text-5xl lg:text-6xl tracking-wider mb-6">INITIATE CONTACT</h3>
-                        <p className="text-xl md:text-3xl leading-relaxed text-slate-200 font-sans font-light">
+                    <div className="text-center w-full mb-10 md:mb-12 mt-10 md:mt-0">
+                        <h3 className="text-emerald-400 font-wide font-bold text-3xl md:text-5xl lg:text-6xl tracking-wider mb-6">INITIATE CONTACT</h3>
+                        <p className="text-lg md:text-3xl leading-relaxed text-slate-200 font-sans font-light">
                         Ready to disrupt your industry vertical? Reach out to our engineering team to construct your next <span className="font-wide font-bold text-emerald-400">game-changing application.</span>
                         </p>
                     </div>
@@ -221,7 +221,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
       </div>
 
       {/* ── Socials - Bottom Right ── */}
-      <div className="absolute bottom-6 right-6 md:bottom-12 md:right-12 pointer-events-auto flex items-end z-50">
+      <div className="fixed bottom-24 right-6 md:bottom-12 md:right-12 pointer-events-auto flex items-end z-50">
          <div className="flex space-x-3">
              <a href="mailto:admin@upgradewithaifolks.com" className="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md">
                  EM
@@ -234,7 +234,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
 
       {/* ── View Again Button (Only visible at end of road) ── */}
       <motion.div 
-         className="fixed bottom-[20vh] left-1/2 z-[60] -translate-x-1/2 flex flex-col items-center pointer-events-auto"
+         className="fixed bottom-[15vh] md:bottom-[20vh] left-1/2 z-[60] -translate-x-1/2 flex flex-col items-center pointer-events-auto"
          style={{ opacity: view === 'ROAD' ? viewAgainOpacity : 0 }}
          initial={false}
       >
@@ -246,7 +246,10 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
               }
            }}
            className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-wide font-bold tracking-widest rounded-full hover:bg-white/20 hover:scale-105 hover:border-white/50 transition-all text-sm md:text-base uppercase shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-         >
+
+
+
+>
            View Journey Again
          </button>
       </motion.div>
