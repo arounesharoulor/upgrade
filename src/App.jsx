@@ -54,6 +54,8 @@ function App() {
         />
       ) : (
         <BusinessTemplate 
+          view={view}
+          setView={setView}
           activeTemplate={activeTemplate}
           setActiveTemplate={setActiveTemplate}
         />

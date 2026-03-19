@@ -466,46 +466,21 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
           </div>
       </nav>
 
-      {/* ── Expandable Top Nav ── */}
-      <div className="group fixed top-[80px] md:top-10 left-1/2 -translate-x-1/2 z-[150] flex items-center bg-[#020308]/80 backdrop-blur-xl rounded-full border border-[rgba(230,57,70,0.3)] pointer-events-auto shadow-[0_0_30px_rgba(230,57,70,0.15)] px-6 py-3 md:px-8 md:py-4 transition-all duration-500 hover:border-[rgba(230,57,70,0.6)] hover:bg-[#020308]/95">
-          <div className="flex items-center gap-0 group-hover:gap-6 md:group-hover:gap-12 transition-all duration-500">
-              {['ROAD', 'PRICING', 'CONTACT'].map((item) => {
-                  const isActive = view === item;
-                  const label = item === 'ROAD' ? 'ROOT' : item;
-                  return (
-                      <button 
-                          key={item} 
-                          onClick={(e) => {
-                              e.stopPropagation();
-                              setView(item); 
-                              if(item === 'ROAD') {
-                                  document.documentElement.style.scrollBehavior = 'smooth';
-                                  window.scrollTo(0, 0);
-                                  setTimeout(() => document.documentElement.style.scrollBehavior = 'auto', 1000);
-                              }
-                          }} 
-                          className={`relative flex flex-col items-center justify-center transition-all duration-500 overflow-hidden ${isActive ? 'max-w-[120px] opacity-100 text-[#e63946]' : 'max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 hover:text-white text-slate-400'}`}
-                      >
-                          <span className="whitespace-nowrap text-[10px] font-black tracking-[0.3em] uppercase">{label}</span>
-                          <div className={`h-[1px] bg-[#e63946] transition-all duration-500 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'} mt-1 flex-shrink-0`} />
-                      </button>
-                  );
-              })}
-          </div>
+      {/* ── Floating Nav ── */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:top-10 md:bottom-auto z-[150] flex gap-6 md:gap-12 bg-[#020308]/80 backdrop-blur-xl px-6 py-4 md:px-8 md:py-4 rounded-full border border-white/10 pointer-events-auto min-w-max shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+          {['ROAD', 'PRICING', 'CONTACT'].map(item => (
+              <button key={item} onClick={() => setView(item)} className="flex-shrink-0 text-[10px] font-black tracking-[0.3em] uppercase transition-all hover:text-[#e63946] flex flex-col items-center group text-white">
+                  {item === 'ROAD' ? 'ROOT' : item}
+                  <div className={`h-[1px] bg-[#e63946] transition-all duration-500 ${view === item ? 'w-full' : 'w-0 group-hover:w-full'} mt-1 flex-shrink-0`} />
+              </button>
+          ))}
       </div>
 
       {/* ── Main Content Engine ── */}
       <div className="w-full h-full relative z-10">
           <AnimatePresence mode="wait">
               {view === 'ROAD' && (
-                  <motion.div 
-                    key="road" 
-                    initial={{ opacity: 0, scale: 0.9, filter: "blur(20px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0"
-                  >
+                  <motion.div key="road" className="absolute inset-0">
                       
                       {/* Section 00: Scroll To Explore */}
                       <AdvancedSection progress={smoothProgress} start={0} end={0.15} noCard={true}>
@@ -637,14 +612,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               )}
 
               {view === 'PRICING' && (
-                  <motion.div 
-                    key="pricing" 
-                    initial={{ opacity: 0, scale: 0.9, filter: "blur(20px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar"
-                  >
+                  <motion.div key="pricing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
                        <div className="w-full max-w-4xl pt-32 md:pt-40 px-4 md:px-0 pb-32">
                           <h2 className="text-2xl md:text-3xl font-black mb-10 md:mb-16 uppercase italic tracking-tighter">ELITE <span className="text-[#e63946]">VALUE.</span></h2>
                           <div className="grid gap-4">
@@ -670,14 +638,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               )}
 
               {view === 'CONTACT' && (
-                  <motion.div 
-                    key="contact" 
-                    initial={{ opacity: 0, scale: 0.9, filter: "blur(20px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar"
-                  >
+                  <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
                        <div className="text-center px-4 w-full pt-32 md:pt-40 pb-32">
                            <h2 className="text-3xl md:text-6xl font-black mb-10 md:mb-16 uppercase italic tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-tr from-[#ff8e3c] to-[#e63946]">SECURE <br/> LINK.</h2>
                            <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center">
