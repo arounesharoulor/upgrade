@@ -396,6 +396,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate }) 
     if (scrollContainerRef.current) {
         setTimeout(() => {
             scrollContainerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+            scrollContainerRef.current.dispatchEvent(new Event('scroll'));
         }, 10);
     }
   }, [view, activeTemplate]);
@@ -421,11 +422,11 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate }) 
           </Canvas>
         </div>
 
-        {/* Nav */}
-        <nav className="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-6 py-6 md:px-16 md:py-6 bg-[#020c1b]/60 backdrop-blur-xl border-b border-[#64ffda]/10 pointer-events-auto">
+        {/* Top Header (Transparent, no bar) */}
+        <nav className="absolute top-0 left-0 w-full z-[100] flex items-center justify-between px-6 py-6 md:px-16 md:py-8 pointer-events-auto mix-blend-screen">
           <div className="flex flex-col cursor-pointer z-50 group origin-left hover:scale-105 transition-all duration-500" onClick={() => { setView('ROAD'); scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              <h1 className="font-wide text-lg md:text-3xl font-black tracking-tighter text-white drop-shadow-sm whitespace-nowrap uppercase">
-                  UPGRADE WITH<span className="text-[#64ffda] italic"> AI</span>
+              <h1 className="font-wide text-lg md:text-3xl font-black tracking-tighter text-[#64ffda] drop-shadow-[0_0_15px_rgba(100,255,218,0.4)] whitespace-nowrap uppercase">
+                  UPGRADE <span className="text-white">WITH</span><span className="text-white italic"> AI</span>
               </h1>
               <h2 className="text-[7px] md:text-[10px] font-sans tracking-[0.25em] md:tracking-[0.3em] mt-1 uppercase font-medium text-slate-400">
                   High-Performance Web & Intelligent Solutions
@@ -436,11 +437,27 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate }) 
           </div>
         </nav>
 
-        {/* Floating Bottom Nav */}
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:top-7 md:bottom-auto z-[150] flex gap-5 md:gap-10 bg-[#020c1b]/80 backdrop-blur-xl px-6 py-4 md:px-8 md:py-4 rounded-full border border-[#64ffda]/20 pointer-events-auto text-white text-[10px] font-black tracking-[0.3em] md:tracking-[0.4em] uppercase">
-          <button onClick={() => { setView('ROAD'); scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`hover:text-[#64ffda] transition-colors flex-shrink-0 ${view === 'ROAD' ? 'text-[#64ffda]' : ''}`}>ROOT</button>
-          <button onClick={() => setView('PRICING')} className={`hover:text-[#64ffda] transition-colors flex-shrink-0 ${view === 'PRICING' ? 'text-[#64ffda]' : ''}`}>PRICING</button>
-          <button onClick={() => setView('CONTACT')} className={`hover:text-[#64ffda] transition-colors flex-shrink-0 ${view === 'CONTACT' ? 'text-[#64ffda]' : ''}`}>CONTACT</button>
+        {/* Expandable Top Nav */}
+        <div className="group fixed top-[80px] md:top-8 left-1/2 -translate-x-1/2 z-[150] flex items-center bg-[#020c1b]/80 backdrop-blur-xl rounded-full border border-[#64ffda]/30 pointer-events-auto shadow-[0_0_30px_rgba(100,255,218,0.1)] px-6 py-3 md:px-8 md:py-4 transition-all duration-500 hover:border-[#64ffda]/60 hover:bg-[#020c1b]/95">
+          <div className="flex items-center gap-0 group-hover:gap-6 md:group-hover:gap-10 transition-all duration-500">
+            {['ROAD', 'PRICING', 'CONTACT'].map((item) => {
+              const isActive = view === item;
+              const label = item === 'ROAD' ? 'ROOT' : item;
+              return (
+                <button 
+                  key={item}
+                  onClick={(e) => { 
+                    e.stopPropagation();
+                    setView(item); 
+                    if(item === 'ROAD') scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); 
+                  }} 
+                  className={`relative flex items-center justify-center transition-all duration-500 overflow-hidden ${isActive ? 'max-w-[120px] opacity-100 text-[#64ffda]' : 'max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 hover:text-white text-slate-400'}`}
+                >
+                  <span className="whitespace-nowrap font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px]">{label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Content */}
@@ -560,7 +577,13 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate }) 
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+                                if (scrollContainerRef.current) {
+                                    scrollContainerRef.current.style.scrollBehavior = 'smooth';
+                                    scrollContainerRef.current.scrollTop = 0;
+                                    setTimeout(() => {
+                                        if (scrollContainerRef.current) scrollContainerRef.current.style.scrollBehavior = 'auto';
+                                    }, 1000);
+                                }
                             }}
                             className="group flex flex-col items-center gap-2 transition-all relative z-[100]"
                           >

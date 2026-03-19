@@ -19,6 +19,7 @@ function App() {
     // Using setTimeout to guarantee the DOM height expands to 600vh before scrolling.
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'instant' });
+      window.dispatchEvent(new Event('scroll'));
     }, 10);
   }, [view, activeTemplate]);
 
