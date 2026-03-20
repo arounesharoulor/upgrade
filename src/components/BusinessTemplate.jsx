@@ -13,6 +13,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import ExploreDropdown from './ExploreDropdown';
+import useIsMobile from '../hooks/useIsMobile';
 
 // ─── Theme Constants ───
 const THEME_COLOR = "#64ffda";
@@ -43,7 +44,7 @@ const successMetrics = [
 
 // ─── Corporate Data Intro Animation ───
 
-function BusinessIntro({ onComplete }) {
+function BusinessIntro({ onComplete, isMobile }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState(0); // 0=bars, 1=metrics, 2=reveal
 
@@ -94,19 +95,21 @@ function BusinessIntro({ onComplete }) {
         transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Rising bar chart background */}
-      <div className="absolute bottom-0 left-0 right-0 h-[40vh] flex items-end justify-center gap-[6px] px-16 z-0 opacity-20">
-        {barHeights.map((h, i) => (
-          <motion.div
-            key={i}
-            className="flex-1 rounded-t-sm"
-            style={{ background: `linear-gradient(to top, transparent, ${i % 2 === 0 ? '#64ffda' : '#48bfe3'})` }}
-            initial={{ height: 0 }}
-            animate={{ height: `${h * (progress / 100)}%` }}
-            transition={{ duration: 1.2, delay: i * 0.05, ease: "easeOut" }}
-          />
-        ))}
-      </div>
+      {/* Rising bar chart background - Hidden on mobile for smoothness */}
+      {!isMobile && (
+        <div className="absolute bottom-0 left-0 right-0 h-[40vh] flex items-end justify-center gap-[6px] px-16 z-0 opacity-20">
+          {barHeights.map((h, i) => (
+            <motion.div
+              key={i}
+              className="flex-1 rounded-t-sm"
+              style={{ background: `linear-gradient(to top, transparent, ${i % 2 === 0 ? '#64ffda' : '#48bfe3'})` }}
+              initial={{ height: 0 }}
+              animate={{ height: `${h * (progress / 100)}%` }}
+              transition={{ duration: 1.2, delay: i * 0.05, ease: "easeOut" }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Ticker strip */}
       <motion.div
@@ -340,7 +343,7 @@ function BusinessScene({ scrollRef, view }) {
   );
 }
 
-function AdvancedSection({ children, progress, start, end, isLast = false }) {
+function AdvancedSection({ children, progress, start, end, isMobile, isLast = false }) {
   const duration = end - start;
   const p1 = start;
   const p2 = start + duration * 0.2;
@@ -353,7 +356,8 @@ function AdvancedSection({ children, progress, start, end, isLast = false }) {
   const rotateX = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [70, 0, 0, isLast ? 0 : -45]);
   const rotateZ = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [-30, 0, 0, isLast ? 0 : 30]);
   const y = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], ["0px", "0px", "0px", isLast ? "0px" : "-150px"]);
-  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [25, 0, 0, isLast ? 0 : 25]);
+  const blurValue = isMobile ? 0 : 25;
+  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [blurValue, 0, 0, isLast ? 0 : blurValue]);
   const filterBlur = useTransform(blur, (v) => `blur(${v}px)`);
 
   // Simulated extraction beam logic
@@ -384,6 +388,7 @@ function AdvancedSection({ children, progress, start, end, isLast = false }) {
 
 export default function BusinessTemplate({ activeTemplate, setActiveTemplate, view, setView }) {
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
   const scrollContainerRef = useRef(null);
 
   const { scrollYProgress } = useScroll({ container: scrollContainerRef });
@@ -403,23 +408,30 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
   return (
     <>
       <AnimatePresence>
-        {loading && <BusinessIntro onComplete={() => setLoading(false)} />}
+        {loading && <BusinessIntro onComplete={() => setLoading(false)} isMobile={isMobile} />}
       </AnimatePresence>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-30 bg-[#020c1b] overflow-hidden font-sans text-white">
 
         {/* 3D Canvas Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <Canvas>
-            <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
-            <color attach="background" args={["#020c1b"]} />
-            <fog attach="fog" args={["#020c1b", 20, 100]} />
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={2} color={THEME_COLOR} />
-            <BusinessScene scrollRef={scrollContainerRef} view={view} />
-            <Environment preset="city" />
-          </Canvas>
-        </div>
+        {!isMobile && (
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <Canvas>
+              <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
+              <color attach="background" args={["#020c1b"]} />
+              <fog attach="fog" args={["#020c1b", 20, 100]} />
+              <ambientLight intensity={0.5} />
+              <pointLight position={[10, 10, 10]} intensity={2} color={THEME_COLOR} />
+              <BusinessScene scrollRef={scrollContainerRef} view={view} />
+              <Environment preset="city" />
+            </Canvas>
+          </div>
+        )}
+
+        {/* Fallback for Mobile */}
+        {isMobile && (
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#020c1b] via-[#05162d] to-[#0a192f]" />
+        )}
 
         {/* Transparent Header (Logo & Explore Button only) */}
         <nav className="fixed top-0 left-0 w-full z-[100] flex items-center justify-between px-6 py-6 md:px-16 md:py-6 pointer-events-none">
@@ -456,7 +468,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                     <div className="sticky top-0 h-screen w-full">
 
                       {/* SCROLL TO EXPLORE (0 - 0.15) */}
-                      <AdvancedSection progress={smoothProgress} start={0} end={0.15}>
+                      <AdvancedSection progress={smoothProgress} start={0} end={0.15} isMobile={isMobile}>
                         <div className="flex flex-col items-center justify-center pt-24">
                            <motion.div 
                              initial={{ opacity: 0, y: 10 }} 
@@ -471,7 +483,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       </AdvancedSection>
 
                       {/* HERO (0.15 - 0.35) */}
-                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35}>
+                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35} isMobile={isMobile}>
                         <h2 className="text-[#64ffda] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-8 font-black">Enterprise Command</h2>
                         <h1 className="text-white font-wide text-4xl md:text-6xl font-black mb-8 leading-[1.05] tracking-tighter uppercase italic">
                           BUILDING <br />
@@ -486,7 +498,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       </AdvancedSection>
 
                       {/* ABOUT (0.35 - 0.55) */}
-                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55}>
+                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55} isMobile={isMobile}>
                         <h2 className="text-[#64ffda] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-10 font-black">Who We Are</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left">
                           <div>
@@ -517,7 +529,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       </AdvancedSection>
 
                       {/* METRICS (0.55 - 0.75) */}
-                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75}>
+                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75} isMobile={isMobile}>
                         <h2 className="text-[#64ffda] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Impact Dashboard</h2>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl mx-auto">
                           {successMetrics.map((sm, i) => {
@@ -535,7 +547,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       </AdvancedSection>
 
                       {/* SERVICES (0.75 - 0.9) */}
-                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9}>
+                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9} isMobile={isMobile}>
                         <h2 className="text-[#64ffda] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Service Arsenal</h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
                           {services.map((s, i) => (
@@ -549,7 +561,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       </AdvancedSection>
 
                       {/* FINAL (0.9 - 1.0) */}
-                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isLast={true}>
+                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isMobile={isMobile} isLast={true}>
                         <h2 className="text-3xl md:text-6xl font-black mb-10 text-white uppercase italic tracking-tighter leading-none">
                           READY TO <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#64ffda] to-[#48bfe3]">DOMINATE?</span>
                         </h2>

@@ -14,6 +14,7 @@ import {
 import * as THREE from 'three';
 import { useState, useEffect } from 'react';
 import ExploreDropdown from './ExploreDropdown';
+import useIsMobile from '../hooks/useIsMobile';
 
 // ─── Constants ───
 const THEME_COLOR = "#e63946"; 
@@ -82,7 +83,7 @@ function NeuralEffect() {
   );
 }
 
-function NeuralDimensionIntro({ onComplete }) {
+function NeuralDimensionIntro({ onComplete, isMobile }) {
     useEffect(() => {
         const timer = setTimeout(onComplete, 3500);
         return () => clearTimeout(timer);
@@ -97,10 +98,13 @@ function NeuralDimensionIntro({ onComplete }) {
             className="fixed inset-0 z-[1000] bg-[#020308] flex items-center justify-center overflow-hidden"
         >
             <div className="absolute inset-0 z-0 opacity-40">
-                <Canvas>
-                    <PerspectiveCamera makeDefault position={[0, 0, 30]} />
-                    <NeuralEffect />
-                </Canvas>
+                {/* Skip Canvas on small devices to increase smoothness */}
+                {!isMobile && (
+                  <Canvas>
+                      <PerspectiveCamera makeDefault position={[0, 0, 30]} />
+                      <NeuralEffect />
+                  </Canvas>
+                )}
             </div>
             <div className="relative z-10 text-center">
                 <motion.div
@@ -353,7 +357,7 @@ function ColorGradingOverlay() {
 }
 
 // ─── Depth Zoom Section Wrapper ───
-function AdvancedSection({ children, progress, start, end, isLast = false, noCard = false }) {
+function AdvancedSection({ children, progress, start, end, isMobile, isLast = false, noCard = false }) {
   const duration = end - start;
   const p1 = start;
   const p2 = start + duration * 0.15; 
@@ -366,7 +370,8 @@ function AdvancedSection({ children, progress, start, end, isLast = false, noCar
   const y = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], ["150px", "0px", "0px", isLast ? "0px" : "-150px"]);
   const rotateY = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [25, 0, 0, isLast ? 0 : -25]);
   const rotateX = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [-20, 0, 0, isLast ? 0 : 20]);
-  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [12, 0, 0, isLast ? 0 : 12]);
+  const blurValue = isMobile ? 0 : 12;
+  const blur = useTransform(progress, [p1, p2, p3, isLast ? 1.05 : p4], [blurValue, 0, 0, isLast ? 0 : blurValue]);
   const filterBlur = useTransform(blur, (v) => `blur(${v}px)`);
 
   const pointerEvents = useTransform(progress, (v) => {
@@ -418,13 +423,14 @@ const servicesData = [
 
 export default function PremiumTemplate({ view, setView, scrollYProgress, activeTemplate, setActiveTemplate }) {
   const [isNeuralLoading, setIsNeuralLoading] = useState(true);
+  const isMobile = useIsMobile();
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.001 });
 
   return (
     <>
       <AnimatePresence>
         {isNeuralLoading && (
-          <NeuralDimensionIntro onComplete={() => setIsNeuralLoading(false)} />
+          <NeuralDimensionIntro onComplete={() => setIsNeuralLoading(false)} isMobile={isMobile} />
         )}
       </AnimatePresence>
 
@@ -439,17 +445,24 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
       >
         
         {/* ── Immersive 3D Engine ── */}
-        <div className="absolute inset-0 z-0">
-          <Canvas dpr={[1, 2]}>
-            <Scene3D scrollProgress={smoothProgress} view={view} />
-          </Canvas>
-        </div>
+        {!isMobile && (
+          <div className="absolute inset-0 z-0">
+            <Canvas dpr={[1, 2]}>
+              <Scene3D scrollProgress={smoothProgress} view={view} />
+            </Canvas>
+          </div>
+        )}
+
+        {/* Fallback Static Gradient Background for Mobile */}
+        {isMobile && (
+          <div className="absolute inset-0 z-0 bg-gradient-to-tr from-[#020308] via-[#05060b] to-[#0a1128] opacity-100" />
+        )}
 
       {/* ── Visual Polish ── */}
-      <ColorGradingOverlay />
+      {!isMobile && <ColorGradingOverlay />}
 
       {/* ── Data Diagrams ── */}
-      {view === 'ROAD' && <DataDiagramsOverlay />}
+      {(view === 'ROAD' && !isMobile) && <DataDiagramsOverlay />}
 
       {/* ── Navigation ── */}
       <nav className="absolute top-0 w-full flex items-center justify-between px-6 py-6 md:px-12 md:py-10 z-[100] pointer-events-auto">
@@ -483,7 +496,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                   <motion.div key="road" className="absolute inset-0">
                       
                       {/* Section 00: Scroll To Explore */}
-                      <AdvancedSection progress={smoothProgress} start={0} end={0.15} noCard={true}>
+                      <AdvancedSection progress={smoothProgress} start={0} end={0.15} isMobile={isMobile} noCard={true}>
                         <div className="flex flex-col items-center justify-center">
                            <motion.div 
                              initial={{ opacity: 0, y: 10 }} 
@@ -498,7 +511,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 01: Hero */}
-                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35}>
+                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35} isMobile={isMobile}>
                           <span className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.8em] uppercase mb-6 block font-black">Singularity Core</span>
                           <h1 className="text-3xl md:text-5xl font-wide font-black tracking-tighter leading-[0.85] mb-8 italic">
                                HYPER <br/>
@@ -513,7 +526,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 02: About */}
-                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55}>
+                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55} isMobile={isMobile}>
                           <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-10 font-black">Visionary Authority</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                               <div className="text-left">
@@ -544,7 +557,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 03: Metrics */}
-                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75}>
+                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75} isMobile={isMobile}>
                           <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Operation Stats</h2>
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl mx-auto">
                               {[
@@ -564,7 +577,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 04: Services */}
-                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9}>
+                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9} isMobile={isMobile}>
                           <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-12 font-black">Capabilities</h2>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
                               {servicesData.map((s, i) => (
@@ -578,7 +591,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 05: Final */}
-                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isLast={true}>
+                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isMobile={isMobile} isLast={true}>
                           <h2 className="text-3xl md:text-6xl font-black mb-10 uppercase italic tracking-tighter leading-none">
                                VOID <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] to-[#ff8e3c]">INIT.</span>
                           </h2>

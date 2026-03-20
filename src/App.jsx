@@ -7,10 +7,12 @@ import OverlayUI from './components/OverlayUI';
 import RoadContent from './components/RoadContent';
 import PremiumTemplate from './components/PremiumTemplate';
 import BusinessTemplate from './components/BusinessTemplate';
+import useIsMobile from './hooks/useIsMobile';
 
 function App() {
   const [view, setView] = useState('ROAD'); // ROAD, OVERVIEW, LIST, ABOUT
   const [activeTemplate, setActiveTemplate] = useState('client'); // 'client' | 'business' | 'premium'
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll();
 
   useEffect(() => {
@@ -27,11 +29,15 @@ function App() {
     <div className={`w-full ${(view === 'ROAD' && (activeTemplate === 'client' || activeTemplate === 'premium')) ? 'h-[600vh]' : 'h-screen overflow-hidden'}`}>
       {activeTemplate === 'client' ? (
         <>
-          <div className="fixed inset-0 w-full h-full z-0 bg-transparent">
-             <Canvas camera={{ position: [0, 5, 15], fov: 60 }} dpr={[1, 2]}>
-                <Scene view={view} />
-                <Preload all />
-             </Canvas>
+          <div className="fixed inset-0 w-full h-full z-0 bg-[#020617]">
+             {!isMobile ? (
+               <Canvas camera={{ position: [0, 5, 15], fov: 60 }} dpr={[1, 2]}>
+                  <Scene view={view} />
+                  <Preload all />
+               </Canvas>
+             ) : (
+               <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#051025] to-[#020617]" />
+             )}
           </div>
 
           <OverlayUI 
