@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
 
 function ScrollSection({ progress, start, end, title, children }) {
   const duration = end - start;
@@ -31,14 +31,14 @@ function ScrollSection({ progress, start, end, title, children }) {
     >
        <motion.h2 
           style={{ opacity: titleOpacity, scale: titleScale }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-wide font-bold text-3xl md:text-5xl lg:text-7xl tracking-wider text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] z-20 w-full px-4"
+          className="absolute top-[40%] md:top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-wide font-bold text-2xl md:text-5xl lg:text-7xl tracking-wider text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] z-20 w-full px-4"
        >
           {title}
        </motion.h2>
        
        <motion.div
           style={{ opacity: detailOpacity, scale: detailScale, pointerEvents }}
-          className="w-full px-4 md:px-8 max-w-6xl text-center z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[85vh] overflow-y-auto hide-scrollbar"
+          className="w-full px-4 md:px-8 max-w-6xl text-center z-10 absolute top-[55%] md:top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[70vh] md:max-h-[85vh] overflow-y-auto hide-scrollbar"
        >
           {children}
        </motion.div>
@@ -67,7 +67,7 @@ export default function RoadContent() {
 
       <ScrollSection progress={scrollYProgress} start={0.15} end={0.35} title="ABOUT US">
         <div className="backdrop-blur-xl bg-slate-900/60 p-6 md:p-10 rounded-3xl border border-white/10 shadow-2xl mx-auto max-w-5xl">
-          <p className="text-white text-sm md:text-base lg:text-lg font-sans leading-relaxed mb-6">
+          <p className="text-white text-sm md:text-base lg:text-lg font-sans leading-relaxed tracking-wide mb-6">
              At UpgradeWithAIFolks, we blend <span className="font-bold text-emerald-400 drop-shadow-sm">design, development, and AI</span> to build products that solve real problems. Our team moves fast, thinks strategically, and keeps your users front and center.
           </p>
           <div className="text-slate-300 text-xs md:text-sm font-sans leading-relaxed text-left space-y-4 mb-8">

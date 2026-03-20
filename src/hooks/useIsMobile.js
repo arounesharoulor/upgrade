@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
  * Standard breakpoint: 768px (MD in Tailwind)
  */
 export default function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
 
   useEffect(() => {
     const checkMobile = () => {

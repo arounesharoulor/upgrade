@@ -31,7 +31,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
   }, []);
 
   const calcX = `calc(50vw - 50% - ${pad}px + 10px)`;
-  const calcY = `calc(40vh - 50% - ${pad}px)`;
+  const calcY = `calc(45vh - 50% - ${pad}px)`; // Slightly lowered for better mobile centering
   const scrollX = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [calcX, "0px", "0px", calcX]); 
   const scrollY = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [calcY, "0px", "0px", calcY]);
   const scrollScale = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [1.3, 1, 1, 1.3]);
@@ -221,12 +221,12 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
       </div>
 
       {/* ── Socials - Bottom Right ── */}
-      <div className="fixed bottom-24 right-6 md:bottom-12 md:right-12 pointer-events-auto flex items-end z-50">
+      <div className="fixed bottom-32 md:bottom-12 right-6 md:right-12 pointer-events-auto flex items-end z-50">
          <div className="flex space-x-3">
-             <a href="mailto:admin@upgradewithaifolks.com" className="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md">
+             <a href="mailto:admin@upgradewithaifolks.com" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-base">
                  EM
              </a>
-             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md">
+             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-base">
                  WA
              </a>
          </div>

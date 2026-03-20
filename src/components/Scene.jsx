@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Float, Text, Icosahedron, TorusKnot, MeshDistortMaterial, Sparkles, Stars } from '@react-three/drei';
 
-export default function Scene({ view }) {
+export default function Scene({ view, isMobile }) {
   const groupRef = useRef();
   const particlesRef = useRef();
   const scrollRef = useRef(0);
@@ -32,7 +32,7 @@ export default function Scene({ view }) {
     };
   }, []);
 
-  const particleCount = 4000;
+  const particleCount = isMobile ? 1200 : 4000;
   const [positions, sizes] = useMemo(() => {
     const positions = new Float32Array(particleCount * 3);
     const sizes = new Float32Array(particleCount);
@@ -208,16 +208,16 @@ export default function Scene({ view }) {
       </points>
 
       {/* Immersive Start / Intro atmosphere (Keep for all views) */}
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      <Sparkles count={1500} scale={[50, 50, 50]} size={3} speed={0.4} opacity={0.6} position={[0, 0, 0]} color="#ffffff" />
+      <Stars radius={100} depth={50} count={isMobile ? 1500 : 5000} factor={4} saturation={0} fade speed={1} />
+      <Sparkles count={isMobile ? 400 : 1500} scale={[50, 50, 50]} size={3} speed={0.4} opacity={0.6} position={[0, 0, 0]} color="#ffffff" />
       
       {/* Decorative 3D Floating Objects along the path */}
       {view === 'ROAD' && (
         <>
-            <Sparkles count={800} scale={[25, 25, 30]} size={6} speed={1} opacity={0.3} position={[0, 0, -20]} color="#38bdf8" />
+            <Sparkles count={isMobile ? 200 : 800} scale={[25, 25, 30]} size={6} speed={1} opacity={0.3} position={[0, 0, -20]} color="#38bdf8" />
             <IntroAsteroid />
-            <SectionSpecificObjects />
-            <PathRings />
+            <SectionSpecificObjects isMobile={isMobile} />
+            {!isMobile && <PathRings />}
         </>
       )}
 
@@ -301,12 +301,13 @@ function PathRings() {
 }
 
 
-function SectionSpecificObjects() {
+function SectionSpecificObjects({ isMobile }) {
   const objects = useMemo(() => {
     const list = [];
+    const countMult = isMobile ? 0.4 : 1;
     
     // About Section (Z: -35 to -80): Icosahedrons
-    for (let i=0; i<4; i++) {
+    for (let i=0; i<Math.ceil(4 * countMult); i++) {
        const z = -(40 + Math.random() * 40);
        const x = Math.sin(z * 0.05) * 8 + (Math.random()-0.5)*25;
        const y = Math.cos(z * 0.03) * 3 + (Math.random()-0.5)*20;
@@ -314,7 +315,7 @@ function SectionSpecificObjects() {
     }
     
     // Services Section (Z: -80 to -140): TorusKnots
-    for (let i=0; i<3; i++) {
+    for (let i=0; i<Math.ceil(3 * countMult); i++) {
        const z = -(85 + Math.random() * 55);
        const x = Math.sin(z * 0.05) * 8 + (Math.random()-0.5)*25;
        const y = Math.cos(z * 0.03) * 3 + (Math.random()-0.5)*20;
@@ -322,7 +323,7 @@ function SectionSpecificObjects() {
     }
 
     // Approach Section (Z: -140 to -190): Octahedrons
-    for (let i=0; i<5; i++) {
+    for (let i=0; i<Math.ceil(5 * countMult); i++) {
        const z = -(145 + Math.random() * 45);
        const x = Math.sin(z * 0.05) * 8 + (Math.random()-0.5)*25;
        const y = Math.cos(z * 0.03) * 3 + (Math.random()-0.5)*20;

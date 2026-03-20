@@ -30,14 +30,14 @@ function App() {
       {activeTemplate === 'client' ? (
         <>
           <div className="fixed inset-0 w-full h-full z-0 bg-[#020617]">
-             {!isMobile ? (
-               <Canvas camera={{ position: [0, 5, 15], fov: 60 }} dpr={[1, 2]}>
-                  <Scene view={view} />
-                  <Preload all />
-               </Canvas>
-             ) : (
-               <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#051025] to-[#020617]" />
-             )}
+             <Canvas 
+                camera={{ position: [0, 5, 15], fov: 60 }} 
+                dpr={isMobile ? [1, 1.2] : [1, 2]}
+                gl={{ antialias: !isMobile }}
+             >
+                <Scene view={view} isMobile={isMobile} />
+                <Preload all />
+             </Canvas>
           </div>
 
           <OverlayUI 

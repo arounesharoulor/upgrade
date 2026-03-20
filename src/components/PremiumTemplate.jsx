@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useTransform, useScroll, useSpring } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
@@ -12,7 +12,6 @@ import {
   Grid
 } from '@react-three/drei';
 import * as THREE from 'three';
-import { useState, useEffect } from 'react';
 import ExploreDropdown from './ExploreDropdown';
 import useIsMobile from '../hooks/useIsMobile';
 
@@ -22,10 +21,11 @@ const ACCENT_COLOR = "#ff8e3c";
 
 // ─── Neural Dimension Intro ───
 
-function NeuralEffect() {
+function NeuralEffect({ isMobile }) {
   const points = useMemo(() => {
     const p = [];
-    for (let i = 0; i < 200; i++) {
+    const count = isMobile ? 60 : 200;
+    for (let i = 0; i < count; i++) {
       p.push(new THREE.Vector3((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40));
     }
     return p;
@@ -85,9 +85,9 @@ function NeuralEffect() {
 
 function NeuralDimensionIntro({ onComplete, isMobile }) {
     useEffect(() => {
-        const timer = setTimeout(onComplete, 3500);
+        const timer = setTimeout(onComplete, isMobile ? 1500 : 3500);
         return () => clearTimeout(timer);
-    }, [onComplete]);
+    }, [onComplete, isMobile]);
 
     return (
         <motion.div 
@@ -98,13 +98,13 @@ function NeuralDimensionIntro({ onComplete, isMobile }) {
             className="fixed inset-0 z-[1000] bg-[#020308] flex items-center justify-center overflow-hidden"
         >
             <div className="absolute inset-0 z-0 opacity-40">
-                {/* Skip Canvas on small devices to increase smoothness */}
-                {!isMobile && (
-                  <Canvas>
-                      <PerspectiveCamera makeDefault position={[0, 0, 30]} />
-                      <NeuralEffect />
-                  </Canvas>
-                )}
+                <Canvas 
+                  dpr={isMobile ? [1, 1] : [1, 2]}
+                  gl={{ antialias: false }}
+                >
+                    <PerspectiveCamera makeDefault position={[0, 0, 30]} />
+                    <NeuralEffect isMobile={isMobile} />
+                </Canvas>
             </div>
             <div className="relative z-10 text-center">
                 <motion.div
@@ -138,7 +138,7 @@ function NeuralDimensionIntro({ onComplete, isMobile }) {
 
 // ─── 3D Premium Crown Scene ───
 
-function DiamondCore({ scrollProgress }) {
+function DiamondCore({ scrollProgress, isMobile }) {
   const diamondRef = useRef();
   const outerRef = useRef();
 
@@ -163,14 +163,18 @@ function DiamondCore({ scrollProgress }) {
       <Float speed={3} rotationIntensity={1} floatIntensity={0.5}>
         <mesh ref={diamondRef}>
           <octahedronGeometry args={[3, 0]} />
-          <MeshDistortMaterial
-            color="#e63946"
-            speed={3}
-            distort={0.15}
-            metalness={1}
-            roughness={0.05}
-            envMapIntensity={2}
-          />
+          {isMobile ? (
+            <meshStandardMaterial color="#e63946" metalness={1} roughness={0.1} />
+          ) : (
+            <MeshDistortMaterial
+              color="#e63946"
+              speed={3}
+              distort={0.15}
+              metalness={1}
+              roughness={0.05}
+              envMapIntensity={2}
+            />
+          )}
         </mesh>
       </Float>
       
@@ -190,7 +194,7 @@ function DiamondCore({ scrollProgress }) {
   );
 }
 
-function PremiumScene({ scrollProgress, view }) {
+function PremiumScene({ scrollProgress, view, isMobile }) {
   const masterGroup = useRef();
 
   useFrame((state, delta) => {
@@ -227,12 +231,12 @@ function PremiumScene({ scrollProgress, view }) {
 
   return (
     <group ref={masterGroup}>
-      <DiamondCore />
+      <DiamondCore isMobile={isMobile} />
     </group>
   );
 }
 
-function Scene3D({ scrollProgress, view }) {
+function Scene3D({ scrollProgress, view, isMobile }) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
@@ -244,23 +248,23 @@ function Scene3D({ scrollProgress, view }) {
       <pointLight position={[-20, -20, -10]} intensity={3} color={ACCENT_COLOR} distance={80} />
       <pointLight position={[0, 0, 20]} intensity={1} color="#ffffff" distance={40} />
       
-      <PremiumScene scrollProgress={scrollProgress} view={view} />
+      <PremiumScene scrollProgress={scrollProgress} view={view} isMobile={isMobile} />
       
-      <Sparkles count={600} scale={[80, 80, 80]} size={1.5} speed={0.3} color={ACCENT_COLOR} />
+      <Sparkles count={isMobile ? 150 : 600} scale={[80, 80, 80]} size={1.5} speed={0.3} color={ACCENT_COLOR} />
       
-      <Stars radius={150} depth={60} count={3000} factor={4} saturation={0} fade speed={0.8} />
+      <Stars radius={150} depth={60} count={isMobile ? 1000 : 3000} factor={4} saturation={0} fade speed={0.8} />
       
       <Grid
         position={[0, -25, 0]}
         infiniteGrid
-        fadeDistance={100}
+        fadeDistance={isMobile ? 60 : 100}
         cellSize={1.5}
         sectionSize={6}
         sectionThickness={0.8}
         sectionColor={THEME_COLOR}
       />
       
-      <ContactShadows position={[0, -25, 0]} opacity={0.3} scale={100} blur={3} />
+      {!isMobile && <ContactShadows position={[0, -25, 0]} opacity={0.3} scale={100} blur={3} />}
       <Environment preset="night" />
     </>
   );
@@ -402,7 +406,7 @@ function AdvancedSection({ children, progress, start, end, isMobile, isLast = fa
                 transformStyle: "preserve-3d",
                 boxShadow: "0 100px 200px rgba(0,0,0,0.8)"
               }}
-              className="w-full max-w-4xl bg-gradient-to-br from-white/[0.05] to-white/[0.01] backdrop-blur-[30px] border border-white/20 rounded-[24px] md:rounded-[40px] p-6 md:p-16 shadow-[0_0_50px_rgba(230,57,70,0.05)]"
+              className="w-full max-w-4xl bg-gradient-to-br from-white/[0.05] to-white/[0.01] backdrop-blur-[30px] border border-white/20 rounded-[24px] md:rounded-[40px] p-6 md:p-16 shadow-[0_0_50px_rgba(230,57,70,0.05)] overflow-y-auto max-h-[75vh] hide-scrollbar"
           >
               {children}
           </motion.div>
@@ -435,27 +439,25 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
       </AnimatePresence>
 
       <motion.div 
-        initial={{ opacity: 0, filter: "blur(20px)" }}
+        initial={{ opacity: 0, filter: isMobile ? "blur(0px)" : "blur(20px)" }}
         animate={{ 
           opacity: isNeuralLoading ? 0 : 1, 
-          filter: isNeuralLoading ? "blur(20px)" : "blur(0px)" 
+          filter: (isNeuralLoading || isMobile) ? "blur(0px)" : "blur(0px)" 
         }}
         transition={{ duration: 1.5 }}
-        className="fixed inset-0 z-30 bg-[#020308] text-white overflow-hidden font-sans flex items-center justify-center"
+        className="fixed inset-0 z-30 bg-[#020308] text-white overflow-hidden font-sans"
       >
         
         {/* ── Immersive 3D Engine ── */}
-        {!isMobile && (
-          <div className="absolute inset-0 z-0">
-            <Canvas dpr={[1, 2]}>
-              <Scene3D scrollProgress={smoothProgress} view={view} />
-            </Canvas>
-          </div>
-        )}
+        <div className="absolute inset-0 z-[1]">
+          <Canvas dpr={isMobile ? [1, 1] : [1, 2]} gl={{ antialias: false, powerPreference: "high-performance" }}>
+            <Scene3D scrollProgress={smoothProgress} view={view} isMobile={isMobile} />
+          </Canvas>
+        </div>
 
-        {/* Fallback Static Gradient Background for Mobile */}
+        {/* Fallback Static Gradient Background for Mobile (Layered behind 3D) */}
         {isMobile && (
-          <div className="absolute inset-0 z-0 bg-gradient-to-tr from-[#020308] via-[#05060b] to-[#0a1128] opacity-100" />
+          <div className="absolute inset-0 z-[-1] bg-gradient-to-tr from-[#020308] via-[#05060b] to-[#0a1128] opacity-100" />
         )}
 
       {/* ── Visual Polish ── */}
@@ -513,7 +515,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       {/* Section 01: Hero */}
                       <AdvancedSection progress={smoothProgress} start={0.15} end={0.35} isMobile={isMobile}>
                           <span className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.8em] uppercase mb-6 block font-black">Singularity Core</span>
-                          <h1 className="text-3xl md:text-5xl font-wide font-black tracking-tighter leading-[0.85] mb-8 italic">
+                          <h1 className="text-3xl md:text-5xl font-wide font-black tracking-tighter leading-tight md:leading-[0.85] mb-8 italic">
                                HYPER <br/>
                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] via-[#ff8e3c] to-[#ffffff]">ELITE</span>
                           </h1>
@@ -530,7 +532,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                           <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-10 font-black">Visionary Authority</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                               <div className="text-left">
-                                  <p className="text-2xl md:text-4xl font-black mb-6 leading-[1.1] tracking-tighter uppercase italic">
+                                  <p className="text-2xl md:text-4xl font-black mb-6 leading-tight md:leading-[1.1] tracking-tighter uppercase italic">
                                       Defying the <br/>
                                       <span className="text-[#ff8e3c]">Gravity of Norm.</span>
                                   </p>

@@ -234,7 +234,7 @@ function BusinessIntro({ onComplete, isMobile }) {
 
 // ─── 3D Background Scene ───
 
-function BusinessScene({ scrollRef, view }) {
+function BusinessScene({ scrollRef, view, isMobile }) {
   const group = useRef();
   const sphereMatRef = useRef();
   const networkRef = useRef();
@@ -242,7 +242,8 @@ function BusinessScene({ scrollRef, view }) {
   // Generate fixed random points for the connected data network
   const { nodes, edges } = useMemo(() => {
     const points = [];
-    for (let i = 0; i < 40; i++) {
+    const count = isMobile ? 15 : 40;
+    for (let i = 0; i < count; i++) {
         // distribute them in a wider sphere space around the center
         const r = 15 + Math.random() * 20;
         const theta = Math.random() * Math.PI * 2;
@@ -311,9 +312,14 @@ function BusinessScene({ scrollRef, view }) {
   return (
     <group ref={group}>
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-        <Sphere args={[5, 64, 64]}>
-          <MeshDistortMaterial ref={sphereMatRef} color="#112240" roughness={0.2} metalness={0.8} distort={0.4} />
-        </Sphere>
+        <mesh>
+          <sphereGeometry args={[5, isMobile ? 32 : 64, isMobile ? 32 : 64]} />
+          {isMobile ? (
+            <meshStandardMaterial color="#112240" roughness={0.2} metalness={0.8} />
+          ) : (
+            <MeshDistortMaterial ref={sphereMatRef} color="#112240" roughness={0.2} metalness={0.8} distort={0.4} />
+          )}
+        </mesh>
       </Float>
 
       {/* Connected Data Network */}
@@ -336,7 +342,7 @@ function BusinessScene({ scrollRef, view }) {
           ))}
       </group>
 
-      <Sparkles count={500} scale={[100, 100, 100]} size={2} speed={0.2} color={THEME_COLOR} />
+      <Sparkles count={isMobile ? 150 : 500} scale={[100, 100, 100]} size={2} speed={0.2} color={THEME_COLOR} />
 
       <Grid position={[0, -20, 0]} infiniteGrid fadeDistance={100} cellSize={1} sectionSize={5} sectionColor={THEME_COLOR} sectionThickness={1} />
     </group>
@@ -377,7 +383,7 @@ function AdvancedSection({ children, progress, start, end, isMobile, isLast = fa
          style={{ opacity: laserOpacity }}
          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] rounded-full h-[600px] bg-gradient-to-t from-transparent via-[#64ffda] to-transparent shadow-[0_0_30px_#64ffda] pointer-events-none" 
       />
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center relative z-10">
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center relative z-10 overflow-y-auto max-h-[80vh] hide-scrollbar p-6">
         {children}
       </div>
     </motion.div>
@@ -414,19 +420,20 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-30 bg-[#020c1b] overflow-hidden font-sans text-white">
 
         {/* 3D Canvas Background */}
-        {!isMobile && (
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <Canvas>
-              <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
-              <color attach="background" args={["#020c1b"]} />
-              <fog attach="fog" args={["#020c1b", 20, 100]} />
-              <ambientLight intensity={0.5} />
-              <pointLight position={[10, 10, 10]} intensity={2} color={THEME_COLOR} />
-              <BusinessScene scrollRef={scrollContainerRef} view={view} />
-              <Environment preset="city" />
-            </Canvas>
-          </div>
-        )}
+        <div className="absolute inset-0 z-[1] pointer-events-none">
+          <Canvas 
+            dpr={isMobile ? [1, 1] : [1, 2]} 
+            gl={{ antialias: false, powerPreference: "high-performance" }}
+          >
+            <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
+            <color attach="background" args={["#020c1b"]} />
+            <fog attach="fog" args={["#020c1b", 20, 100]} />
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={2} color={THEME_COLOR} />
+            <BusinessScene scrollRef={scrollContainerRef} view={view} isMobile={isMobile} />
+            <Environment preset="city" />
+          </Canvas>
+        </div>
 
         {/* Fallback for Mobile */}
         {isMobile && (
@@ -485,7 +492,7 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                       {/* HERO (0.15 - 0.35) */}
                       <AdvancedSection progress={smoothProgress} start={0.15} end={0.35} isMobile={isMobile}>
                         <h2 className="text-[#64ffda] font-wide text-xs md:text-sm tracking-[0.6em] uppercase mb-8 font-black">Enterprise Command</h2>
-                        <h1 className="text-white font-wide text-4xl md:text-6xl font-black mb-8 leading-[1.05] tracking-tighter uppercase italic">
+                        <h1 className="text-white font-wide text-3xl md:text-6xl font-black mb-8 leading-tight md:leading-[1.05] tracking-tighter uppercase italic">
                           BUILDING <br />
                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#64ffda] to-[#48bfe3]">MARKET LEADERS</span>
                         </h1>
