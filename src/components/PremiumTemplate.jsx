@@ -274,7 +274,7 @@ function Scene3D({ scrollProgress, view, isMobile }) {
       <Environment preset="night" />
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
-    </group>
+    </>
   );
 }
 
