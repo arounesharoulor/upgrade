@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useTransform, useSpring } from 'framer-motion';
 import ExploreDropdown from './ExploreDropdown';
+import useIsMobile from '../hooks/useIsMobile';
 
 const pricingPlans = [
   { 
@@ -21,7 +22,15 @@ const pricingPlans = [
 ];
 
 export default function OverlayUI({ view, setView, scrollYProgress, activeTemplate, setActiveTemplate }) {
+  const isMobile = useIsMobile();
   const [pad, setPad] = useState(24);
+  
+  // Create a smoothed version of the scroll progress for perfect, lag-free transitions
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
   
   useEffect(() => {
     const handleResize = () => setPad(window.innerWidth >= 768 ? 48 : 24);
@@ -30,18 +39,20 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const calcX = `calc(50vw - 50% - ${pad}px + 10px)`;
-  const calcY = `calc(45vh - 50% - ${pad}px)`; // Slightly lowered for better mobile centering
-  const scrollX = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [calcX, "0px", "0px", calcX]); 
-  const scrollY = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [calcY, "0px", "0px", calcY]);
-  const scrollScale = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [1.3, 1, 1, 1.3]);
-  const alignItems = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], ["center", "flex-start", "flex-start", "center"]);
-  const skewX = useTransform(scrollYProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], [0, -8, 0, 0, 8, 0]);
-  const textBlur = useTransform(scrollYProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], ["blur(0px)", "blur(2px)", "blur(0px)", "blur(0px)", "blur(2px)", "blur(0px)"]);
-  const textAlign = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], ["center", "left", "left", "center"]);
-  const h1ScrollColor = useTransform(scrollYProgress, [0, 1], ["#ffffff", "#ffffff"]);
-  const h2ScrollColor = useTransform(scrollYProgress, [0, 1], ["#94a3b8", "#94a3b8"]);
-  const viewAgainOpacity = useTransform(scrollYProgress, [0.95, 1], [0, 1]);
+  const calcX = `calc(50vw - 50% - ${pad}px)`;
+  const calcY = `calc(50vh - 50% - ${pad}px - 20px)`; // Perfectly centered with slight offset upward
+  const scrollX = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcX, "0px", "0px", calcX]); 
+  const scrollY = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcY, "0px", "0px", calcY]);
+  const scrollScale = useTransform(smoothProgress, [0, 0.05, 0.95, 1], [1.3, 1, 1, 1.3]);
+  const alignItems = useTransform(smoothProgress, [0, 0.05, 0.95, 1], ["center", "flex-start", "flex-start", "center"]);
+  const skewX = useTransform(smoothProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], [0, -8, 0, 0, 8, 0]);
+  const blurValue = useTransform(smoothProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], [0, 2, 0, 0, 2, 0]);
+  const textBlur = useTransform(blurValue, (v) => `blur(${Math.max(0, v)}px)`);
+  const textAlign = useTransform(smoothProgress, [0, 0.05, 0.95, 1], ["center", "left", "left", "center"]);
+  const h1ScrollColor = useTransform(smoothProgress, [0, 1], ["#ffffff", "#ffffff"]);
+  const h2ScrollColor = useTransform(smoothProgress, [0, 1], ["#94a3b8", "#94a3b8"]);
+  const headerGlobalOpacity = useTransform(smoothProgress, [0, 0.05, 0.8, 0.95, 0.98, 1], [1, 1, 1, 0, 0, 1]);
+  const viewAgainOpacity = useTransform(smoothProgress, [0.99, 1], [0, 1]);
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none flex flex-col p-6 md:p-12 h-screen w-screen overflow-hidden">
@@ -59,7 +70,8 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
             scale: view === 'ROAD' ? scrollScale : 1,
             alignItems: view === 'ROAD' ? alignItems : "flex-start",
             skewX: view === 'ROAD' ? skewX : 0,
-            filter: view === 'ROAD' ? textBlur : "blur(0px)"
+            filter: view === 'ROAD' ? textBlur : "blur(0px)",
+            opacity: view === 'ROAD' ? headerGlobalOpacity : 1
           }}
         >
           <motion.div
@@ -71,22 +83,24 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
           >
               <motion.h1 
                 style={{ color: '#ffffff', textAlign: view === 'ROAD' ? textAlign : "left" }}
-                className="font-wide text-2xl md:text-4xl font-bold tracking-tighter hover:opacity-80 transition-opacity drop-shadow-sm w-full whitespace-nowrap"
+                className="font-wide text-lg md:text-2xl lg:text-3xl font-bold tracking-tighter hover:opacity-80 transition-opacity drop-shadow-2xl w-full whitespace-nowrap uppercase"
               >
               UPGRADE WITH AI
               </motion.h1>
+
+          
               <motion.h2 
                 style={{ color: '#94a3b8', textAlign: view === 'ROAD' ? textAlign : "left" }}
-                className="text-xs md:text-sm font-sans tracking-[0.2em] mt-2 uppercase font-medium w-full"
+                className="text-[10px] md:text-xs font-sans tracking-[0.2em] mt-1.5 uppercase font-medium w-full"
               >
-              High-Performance Web &amp; Intelligent Solutions
+              High-Performance Web & Intelligent Solutions
               </motion.h2>
           </motion.div>
         </motion.div>
 
         {/* ── Center: Navigation ── */}
         <motion.nav
-          className="fixed bottom-6 left-1/2 flex items-center gap-6 md:gap-12 bg-black/60 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none px-6 py-4 md:p-0 rounded-full md:rounded-none md:absolute md:top-0 md:bottom-auto pointer-events-auto border border-white/10 md:border-none z-[100]"
+          className="fixed bottom-6 left-1/2 md:bottom-auto md:top-8 flex items-center gap-6 md:gap-10 bg-white/5 backdrop-blur-md px-6 py-3 rounded-full pointer-events-auto border border-white/20 z-[100]"
           style={{ x: "-50%" }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -131,9 +145,9 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                     className="w-full max-w-6xl h-full flex flex-col pointer-events-auto pt-10 md:pt-4 px-4 pb-24 overflow-y-auto hide-scrollbar"
                 >
                     <div className="mb-8 md:mb-10 w-full mt-10 md:mt-0">
-                        <h3 className="text-blue-400 font-wide text-3xl md:text-4xl mb-4 tracking-wider">MODULAR PRICING TIERS</h3>
-                        <p className="text-sm md:text-lg font-sans text-slate-300 max-w-4xl leading-relaxed">
-                            Whether you need a high-impact presence or a massive database-driven platform intertwined with an enterprise LLM, we deliver uncompromising quality at fair prices. Every plan is meticulously engineered and includes post-launch technical support to guarantee a smooth transition into production. Prices strictly depend on system complexity and operational scope.
+                        <h3 className="text-blue-400 font-wide font-bold text-lg md:text-2xl lg:text-3xl mb-4 tracking-tighter uppercase italic">MODULAR PRICING TIERS</h3>
+                        <p className="text-sm md:text-base font-sans text-slate-300 max-w-4xl leading-relaxed font-medium">
+                            Whether you need a high-impact presence or a massive database-driven platform intertwined with an enterprise LLM, we deliver uncompromising quality at fair prices. Every plan is meticulously engineered and includes post-launch technical support.
                         </p>
                     </div>
 
@@ -141,10 +155,10 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                         {pricingPlans.map((p, i) => (
                             <div key={i} onClick={() => window.open(`https://wa.me/918825802060?text=I'm%20interested%20in%20estimating%20the%20${encodeURIComponent(p.title)}`, '_blank')} className="py-8 border-b border-white/20 flex flex-col md:flex-row md:justify-between md:items-center hover:bg-white/5 transition duration-300 cursor-pointer group px-4 rounded-xl">
                                 <div className="flex flex-col md:w-[70%]">
-                                    <span className="font-bold text-2xl md:text-3xl font-sans group-hover:pl-4 transition-all duration-300 group-hover:text-blue-400 text-white uppercase tracking-tight">{p.title}</span>
-                                    <span className="text-md font-sans text-slate-400 mt-2 leading-relaxed">{p.desc}</span>
+                                    <span className="font-wide font-bold text-lg md:text-xl lg:text-2xl group-hover:pl-4 transition-all duration-300 group-hover:text-blue-400 text-white uppercase italic tracking-tighter">{p.title}</span>
+                                    <span className="text-sm font-sans text-slate-400 mt-2 leading-relaxed font-medium">{p.desc}</span>
                                 </div>
-                                <span className="font-wide font-bold text-xl md:text-2xl mt-4 md:mt-0 text-blue-400 md:text-right whitespace-nowrap">{p.price}</span>
+                                <span className="font-wide font-bold text-base md:text-lg lg:text-xl mt-4 md:mt-0 text-blue-400 md:text-right whitespace-nowrap">{p.price}</span>
                             </div>
                         ))}
                     </div>
@@ -176,15 +190,14 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                     className="max-w-5xl w-full mx-auto pointer-events-auto h-full overflow-y-auto hide-scrollbar pt-16 md:pt-10 pb-24 px-4 flex flex-col items-center"
                 >
                     <div className="text-center w-full mb-10 md:mb-12 mt-10 md:mt-0">
-                        <h3 className="text-emerald-400 font-wide font-bold text-3xl md:text-5xl lg:text-6xl tracking-wider mb-6">INITIATE CONTACT</h3>
-                        <p className="text-lg md:text-3xl leading-relaxed text-slate-200 font-sans font-light">
-                        Ready to disrupt your industry vertical? Reach out to our engineering team to construct your next <span className="font-wide font-bold text-emerald-400">game-changing application.</span>
+                        <h3 className="text-emerald-400 font-wide font-bold text-lg md:text-2xl lg:text-3xl tracking-tighter mb-6 uppercase italic">INITIATE CONTACT</h3>
+                        <p className="text-sm md:text-base leading-relaxed text-slate-200 font-sans font-medium">
+                        Ready to disrupt your industry vertical? Reach out to our engineering team to construct your next <span className="text-emerald-400 font-bold">game-changing application.</span>
                         </p>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mb-16">
                         <div className="backdrop-blur-md bg-white/5 p-10 rounded-3xl border border-white/10 flex flex-col items-center justify-center hover:bg-white/10 transition-colors text-center w-full shadow-2xl">
-                            <div className="text-5xl mb-6">📱</div>
                             <h4 className="font-wide font-bold text-xl mb-3 tracking-widest text-white">DIRECT LINE</h4>
                             <p className="font-sans text-slate-300 text-base mb-8 max-w-[280px]">The absolute fastest method for acquiring rough project estimations. Available for rapid brainstorming logic and high-level consultation.</p>
                             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-full py-5 bg-white/10 text-white rounded-full font-wide font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all duration-300 tracking-widest shadow-xl hover:shadow-2xl border border-white/20 hover:border-emerald-400">
@@ -226,7 +239,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
              <a href="mailto:admin@upgradewithaifolks.com" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-base">
                  EM
              </a>
-             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-base">
+             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-xs">
                  WA
              </a>
          </div>

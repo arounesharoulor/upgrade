@@ -58,3 +58,14 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.journey-snap-container {
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  height: 100vh;
+}
+
+.journey-snap-point {
+  scroll-snap-align: start;
+  height: 100vh;
+}

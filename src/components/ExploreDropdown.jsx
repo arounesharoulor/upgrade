@@ -29,7 +29,7 @@ export default function ExploreDropdown({ activeTemplate, setActiveTemplate }) {
       {/* Explore Button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="explore-btn flex items-center gap-1 md:gap-2 px-3 py-2 md:px-5 md:py-2.5 rounded-full font-wide font-bold text-[10px] md:text-sm tracking-widest transition-all duration-300"
+        className="explore-btn flex items-center gap-1 md:gap-2 px-3 py-2 md:px-5 md:py-2.5 rounded-full font-wide font-bold text-[10px] md:text-xs tracking-widest transition-all duration-300 cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.25) 100%)',
           border: '1px solid rgba(139,92,246,0.5)',
@@ -89,12 +89,12 @@ export default function ExploreDropdown({ activeTemplate, setActiveTemplate }) {
                     <span className="text-lg">{opt.icon}</span>
                     <div className="flex flex-col">
                       <span
-                        className="font-wide font-bold text-xs tracking-widest transition-colors"
+                        className="font-wide font-bold text-[10px] tracking-widest transition-colors"
                         style={{ color: isActive ? '#c4b5fd' : '#e2e8f0' }}
                       >
                         {opt.label.toUpperCase()}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-sans mt-0.5">{opt.desc}</span>
+                      <span className="text-[9px] text-slate-400 font-sans mt-0.5 uppercase font-bold">{opt.desc}</span>
                     </div>
                     {isActive && (
                       <motion.span
