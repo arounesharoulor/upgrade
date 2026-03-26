@@ -25,10 +25,9 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
   const isMobile = useIsMobile();
   const [pad, setPad] = useState(24);
   
-  // Create a smoothed version of the scroll progress for perfect, lag-free transitions
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 50,
+    damping: 25,
     restDelta: 0.001
   });
   
@@ -55,7 +54,8 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
   const viewAgainOpacity = useTransform(smoothProgress, [0.99, 1], [0, 1]);
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none flex flex-col p-6 md:p-12 h-screen w-screen overflow-hidden">
+    <div className="fixed inset-0 z-50 pointer-events-none flex flex-col h-screen w-screen overflow-hidden">
+      <div className="w-full h-full max-w-[1920px] mx-auto relative flex flex-col p-6 md:p-12 pointer-events-none">
       
       {/* ── Top Bar: Logo | Centered Nav | Explore Button ── */}
       <div className="flex justify-between items-start pointer-events-auto shrink-0 z-50 relative">
@@ -91,7 +91,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
           
               <motion.h2 
                 style={{ color: '#94a3b8', textAlign: view === 'ROAD' ? textAlign : "left" }}
-                className="text-[10px] md:text-xs font-sans tracking-[0.2em] mt-1.5 uppercase font-medium w-full"
+                className="text-xs md:text-sm font-sans tracking-[0.2em] mt-1.5 uppercase font-medium w-full"
               >
               High-Performance Web & Intelligent Solutions
               </motion.h2>
@@ -114,7 +114,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                 setView(item);
                 if (item !== 'ROAD') window.scrollTo(0, 0);
               }}
-              className={`nav-link text-white text-xs md:text-sm tracking-widest ${view === item ? 'active text-sm md:text-2xl scale-[1.12]' : ''}`}
+              className={`nav-link text-white text-xs md:text-sm tracking-widest ${view === item ? 'active text-sm md:text-lg scale-[1.12]' : ''}`}
             >
               {item}
             </div>
@@ -236,10 +236,10 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
       {/* ── Socials - Bottom Right ── */}
       <div className="fixed bottom-32 md:bottom-12 right-6 md:right-12 pointer-events-auto flex items-end z-50">
          <div className="flex space-x-3">
-             <a href="mailto:admin@upgradewithaifolks.com" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-base">
+             <a href="mailto:admin@upgradewithaifolks.com" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-xs md:text-base cursor-pointer">
                  EM
              </a>
-             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-[10px] md:text-xs">
+             <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 flex items-center justify-center font-wide font-bold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-md backdrop-blur-md text-xs md:text-base cursor-pointer">
                  WA
              </a>
          </div>
@@ -258,15 +258,13 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
                  window.scrollTo({ top: 0, behavior: 'smooth' });
               }
            }}
-           className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-wide font-bold tracking-widest rounded-full hover:bg-white/20 hover:scale-105 hover:border-white/50 transition-all text-sm md:text-base uppercase shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-
-
-
->
+           className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-wide font-bold tracking-widest rounded-full hover:bg-white/20 hover:scale-105 hover:border-white/50 transition-all text-sm md:text-base uppercase shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] cursor-pointer"
+         >
            View Journey Again
          </button>
       </motion.div>
 
+      </div>
     </div>
   );
 }

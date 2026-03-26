@@ -296,7 +296,7 @@ function DataDiagramsOverlay() {
   ];
 
   return (
-    <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden opacity-[0.07]">
+    <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden opacity-[0.07] max-w-[1920px] mx-auto left-1/2 -translate-x-1/2">
       {diagrams.map((d, i) => (
         <motion.div
           key={i}
@@ -436,7 +436,7 @@ const servicesData = [
 export default function PremiumTemplate({ view, setView, scrollYProgress, activeTemplate, setActiveTemplate }) {
   const [isNeuralLoading, setIsNeuralLoading] = useState(true);
   const isMobile = useIsMobile();
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.001 });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 50, damping: 25, restDelta: 0.001 });
 
   return (
     <>
@@ -484,7 +484,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
       {(view === 'ROAD' && !isMobile) && <DataDiagramsOverlay />}
 
       {/* ── Navigation ── */}
-      <nav className="absolute top-0 w-full flex items-center justify-between px-6 py-6 md:px-12 md:py-10 z-[100] pointer-events-auto">
+      <nav className="absolute top-0 w-full max-w-[1920px] left-1/2 -translate-x-1/2 flex items-center justify-between px-6 py-6 md:px-12 md:py-10 z-[100] pointer-events-auto">
           <div className="flex flex-col cursor-pointer z-50 group origin-left hover:scale-105 transition-all duration-500" onClick={() => setView('ROAD')}>
               <h1 className="font-wide text-lg md:text-2xl lg:text-3xl font-bold tracking-tighter text-white drop-shadow-sm whitespace-nowrap uppercase">
                   UPGRADE WITH<span className="text-[#e63946] italic"> AI</span>
@@ -515,13 +515,13 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                   <motion.div key="road" className="absolute inset-0">
                       
                       {/* Section 00: Scroll To Explore */}
-                      <AdvancedSection progress={smoothProgress} start={0} end={0.15} isMobile={isMobile} noCard={true}>
+                      <AdvancedSection progress={smoothProgress} start={0} end={0.12} isMobile={isMobile} noCard={true}>
                         <div className="flex flex-col items-center justify-center">
                            <motion.div 
                              initial={{ opacity: 0, y: 10 }} 
                              animate={{ opacity: 1, y: 0 }} 
                              transition={{ delay: 1, duration: 2 }}
-                             className="text-white/60 font-wide tracking-[0.4em] text-[10px] md:text-xs uppercase flex flex-col items-center"
+                             className="text-white/60 font-wide tracking-[0.4em] text-xs md:text-sm uppercase flex flex-col items-center"
                            >
                               <span className="mb-6">Scroll to explore</span>
                               <div className="w-[2px] h-24 bg-gradient-to-b from-[#e63946] to-transparent animate-bounce"></div>
@@ -530,8 +530,8 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 01: Hero */}
-                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.35} isMobile={isMobile}>
-                          <span className="text-[#e63946] font-wide text-[10px] md:text-xs tracking-[0.4em] uppercase mb-6 block font-bold">Singularity Core</span>
+                      <AdvancedSection progress={smoothProgress} start={0.15} end={0.32} isMobile={isMobile}>
+                          <span className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.4em] uppercase mb-6 block font-bold">Singularity Core</span>
                           <h1 className="text-lg md:text-2xl lg:text-3xl font-wide font-bold tracking-tighter leading-tight mb-8 uppercase italic">
                                 HYPER <br/>
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] via-[#ff8e3c] to-[#ffffff]">ELITE</span>
@@ -539,14 +539,14 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                           <p className="text-slate-400 text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-10 font-sans font-medium">
                               Architecting digital dominance for the next generation of industry leaders.
                           </p>
-                          <button onClick={() => setView('CONTACT')} className="px-12 py-5 bg-white text-black font-wide font-bold text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-[#e63946] hover:text-white transition-all duration-700 shadow-[0_20px_40px_rgba(255,255,255,0.05)]">
+                          <button onClick={() => setView('CONTACT')} className="px-12 py-5 bg-white text-black font-wide font-bold text-xs tracking-[0.2em] uppercase rounded-full hover:bg-[#e63946] hover:text-white transition-all duration-700 shadow-[0_20px_40px_rgba(255,255,255,0.05)] cursor-pointer">
                               INITIALIZE
                           </button>
                       </AdvancedSection>
 
                       {/* Section 02: About */}
-                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.55} isMobile={isMobile}>
-                          <h2 className="text-[#e63946] font-wide text-[10px] md:text-xs tracking-[0.4em] uppercase mb-10 font-bold">Visionary Authority</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.35} end={0.52} isMobile={isMobile}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.4em] uppercase mb-10 font-bold">Visionary Authority</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                               <div className="text-left">
                                   <p className="text-xl md:text-2xl lg:text-3xl font-wide font-bold mb-6 leading-tight tracking-tighter uppercase italic">
@@ -567,8 +567,8 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                                   ].map((item, idx) => (
                                       <div key={idx} style={{ background: item.bg }} className="border border-white/20 p-4 rounded-[18px] backdrop-blur-md group hover:border-[#e63946]/50 transition-all text-left">
                                           <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">{item.i}</div>
-                                          <h4 className="text-[10px] font-wide font-bold uppercase tracking-widest text-white mb-1">{item.t}</h4>
-                                          <p className="text-[9px] text-slate-300 font-sans font-bold uppercase">{item.d}</p>
+                                          <h4 className="text-xs md:text-sm font-wide font-bold uppercase tracking-widest text-white mb-1">{item.t}</h4>
+                                          <p className="text-[10px] md:text-xs text-slate-300 font-sans font-bold uppercase">{item.d}</p>
                                       </div>
                                   ))}
                               </div>
@@ -576,8 +576,8 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                       </AdvancedSection>
 
                       {/* Section 03: Metrics */}
-                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.75} isMobile={isMobile}>
-                          <h2 className="text-[#e63946] font-wide text-[10px] md:text-xs tracking-[0.4em] uppercase mb-12 font-bold">Operation Stats</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.55} end={0.72} isMobile={isMobile}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.4em] uppercase mb-12 font-bold">Operation Stats</h2>
                           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl mx-auto">
                               {[
                                   { v: "0.8s", l: "LCP SCORE", ic: "📱", sub: "Lighthouse 100", bg: "rgba(230,57,70,0.15)" },
@@ -588,36 +588,36 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                                   <div key={i} style={{ background: m.bg }} className="p-6 border border-white/20 rounded-[25px] group hover:border-[#e63946]/50 transition-all">
                                       <div className="text-xl mb-2">{m.ic}</div>
                                       <div className="text-xl md:text-2xl lg:text-3xl font-wide font-bold mb-2 group-hover:scale-110 transition-transform">{m.v}</div>
-                                      <div className="text-[10px] font-wide font-bold tracking-[0.2em] text-[#ff8e3c] uppercase">{m.l}</div>
-                                      <div className="text-[9px] text-slate-300 mt-1 font-sans font-bold uppercase">{m.sub}</div>
+                                      <div className="text-xs md:text-sm font-wide font-bold tracking-[0.2em] text-[#ff8e3c] uppercase">{m.l}</div>
+                                      <div className="text-[10px] md:text-xs text-slate-300 mt-1 font-sans font-bold uppercase">{m.sub}</div>
                                   </div>
                               ))}
                           </div>
                       </AdvancedSection>
 
                       {/* Section 04: Services */}
-                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.9} isMobile={isMobile}>
-                          <h2 className="text-[#e63946] font-wide text-[10px] md:text-xs tracking-[0.4em] uppercase mb-12 font-bold">Capabilities</h2>
+                      <AdvancedSection progress={smoothProgress} start={0.75} end={0.88} isMobile={isMobile}>
+                          <h2 className="text-[#e63946] font-wide text-xs md:text-sm tracking-[0.4em] uppercase mb-12 font-bold">Capabilities</h2>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
                               {servicesData.map((s, i) => (
                                   <div key={i} style={{ background: s.color.replace('0.06', '0.15') }} className="p-5 border border-white/20 flex flex-col items-center rounded-[24px] hover:border-[#e63946]/50 group transition-all">
                                       <div className="text-3xl mb-3 group-hover:rotate-12 transition-transform">{s.icon}</div>
-                                      <h4 className="font-wide font-bold text-[10px] tracking-widest uppercase text-white mb-2">{s.title}</h4>
-                                      <p className="text-[9px] text-slate-300 font-sans font-bold uppercase leading-relaxed text-center">{s.desc}</p>
+                                      <h4 className="font-wide font-bold text-xs md:text-sm tracking-widest uppercase text-white mb-2">{s.title}</h4>
+                                      <p className="text-[10px] md:text-xs text-slate-300 font-sans font-bold uppercase leading-relaxed text-center">{s.desc}</p>
                                   </div>
                               ))}
                           </div>
                       </AdvancedSection>
 
                       {/* Section 05: Final */}
-                      <AdvancedSection progress={smoothProgress} start={0.9} end={1.0} isMobile={isMobile} isLast={true}>
+                      <AdvancedSection progress={smoothProgress} start={0.91} end={1.0} isMobile={isMobile} isLast={true}>
                           <h2 className="text-lg md:text-2xl lg:text-3xl font-wide font-bold mb-10 uppercase italic tracking-tighter leading-none">
                                 VOID <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e63946] to-[#ff8e3c]">INIT.</span>
                           </h2>
                           <p className="text-slate-500 text-sm font-sans max-w-md mx-auto mb-12 font-medium">Ready to deploy your enterprise vision into the void of the ordinary?</p>
                           <div className="flex flex-col items-center gap-10">
                               <div className="flex justify-center gap-10">
-                                  <button onClick={() => setView('CONTACT')} className="px-16 py-6 bg-white text-black font-wide font-bold text-[10px] tracking-[0.3em] uppercase rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.05)]">DEPLOY PROTOCOL</button>
+                                  <button onClick={() => setView('CONTACT')} className="px-16 py-6 bg-white text-black font-wide font-bold text-xs md:text-sm tracking-[0.3em] uppercase rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.05)] cursor-pointer">DEPLOY PROTOCOL</button>
                               </div>
                               {/* VISIT AGAIN BUTTON - MEDIUM SCALE */}
                               <button 
@@ -635,7 +635,7 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
                                 <div className="w-12 h-12 border border-[#e63946] rounded-full bg-[#e63946]/5 flex items-center justify-center group-hover:bg-[#e63946] group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(230,230,230,0.15)]">
                                     <span className="text-sm text-white rotate-[-90deg] block">➔</span>
                                 </div>
-                                <span className="text-[8px] font-wide font-bold uppercase tracking-[0.4em] text-[#e63946] group-hover:text-white transition-colors">Visit Again</span>
+                                <span className="text-[10px] font-wide font-bold uppercase tracking-[0.4em] text-[#e63946] group-hover:text-white transition-colors">Visit Again</span>
                               </button>
                           </div>
                       </AdvancedSection>

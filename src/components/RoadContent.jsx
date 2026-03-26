@@ -49,20 +49,20 @@ function ScrollSection({ progress, start, end, title, children }) {
 export default function RoadContent() {
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 50,
+    damping: 25,
     restDelta: 0.001
   });
 
   return (
     <>
-      <ScrollSection progress={smoothProgress} start={0} end={0.15} title="">
+      <ScrollSection progress={smoothProgress} start={0} end={0.12} title="">
         <div className="flex flex-col items-center justify-center mt-32 md:mt-40">
            <motion.div 
              initial={{ opacity: 0, y: 10 }} 
              animate={{ opacity: 1, y: 0 }} 
              transition={{ delay: 1, duration: 2 }}
-             className="text-white/60 font-wide font-bold tracking-[0.4em] text-[10px] md:text-xs uppercase flex flex-col items-center"
+             className="text-white/60 font-wide font-bold tracking-[0.4em] text-xs md:text-sm uppercase flex flex-col items-center"
            >
               <span className="mb-6">Scroll to start the journey</span>
               <div className="w-[2px] h-24 bg-gradient-to-b from-white to-transparent animate-bounce"></div>
@@ -70,7 +70,7 @@ export default function RoadContent() {
         </div>
       </ScrollSection>
 
-      <ScrollSection progress={smoothProgress} start={0.15} end={0.35} title="ABOUT US">
+      <ScrollSection progress={smoothProgress} start={0.15} end={0.32} title="ABOUT US">
         <div className="backdrop-blur-2xl bg-slate-950/40 p-6 md:p-12 rounded-[24px] md:rounded-[40px] border border-white/10 shadow-2xl mx-auto max-w-4xl">
           <p className="text-white text-sm md:text-base lg:text-lg font-sans leading-relaxed mb-8 font-medium">
              At UpgradeWithAIFolks, we blend <span className="font-bold text-emerald-400 drop-shadow-sm">design, development, and AI</span> to build products that solve real problems.
@@ -86,15 +86,15 @@ export default function RoadContent() {
               ].map((pill, idx) => (
                 <div key={idx} style={{ background: pill.bg }} className="p-5 rounded-2xl border border-white/5 backdrop-blur-md">
                    <div className="text-2xl mb-2">{pill.i}</div>
-                   <h4 className="text-white font-wide font-bold text-[10px] md:text-xs mb-1 uppercase tracking-wider">{pill.t}</h4>
-                   <p className="text-slate-400 text-[9px] md:text-[10px] uppercase font-bold">{pill.d}</p>
+                   <h4 className="text-white font-wide font-bold text-xs md:text-sm mb-1 uppercase tracking-wider">{pill.t}</h4>
+                   <p className="text-slate-400 text-[10px] md:text-xs uppercase font-bold">{pill.d}</p>
                 </div>
               ))}
           </div>
         </div>
       </ScrollSection>
 
-      <ScrollSection progress={smoothProgress} start={0.35} end={0.60} title="OUR SERVICES">
+      <ScrollSection progress={smoothProgress} start={0.35} end={0.52} title="OUR SERVICES">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 w-full mx-auto max-w-5xl">
             {[
               { icon: '🌐', title: 'Web Development', desc: 'Modern responsive cloud portals.' },
@@ -106,8 +106,8 @@ export default function RoadContent() {
             ].map((s, i) => (
                <div key={i} className="backdrop-blur-2xl bg-white/[0.03] p-6 md:p-8 rounded-[24px] border border-white/10 shadow-xl flex flex-col items-center text-center hover:border-blue-400/50 transition-colors group">
                    <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">{s.icon}</div>
-                   <h3 className="text-blue-400 font-wide font-bold text-[10px] md:text-xs mb-3 uppercase tracking-widest">{s.title}</h3>
-                   <p className="text-slate-300 font-sans text-[9px] md:text-[10px] uppercase font-bold leading-relaxed">
+                   <h3 className="text-blue-400 font-wide font-bold text-xs md:text-sm mb-3 uppercase tracking-widest">{s.title}</h3>
+                   <p className="text-slate-300 font-sans text-[10px] md:text-xs uppercase font-bold leading-relaxed">
                        {s.desc}
                    </p>
                </div>
@@ -115,7 +115,7 @@ export default function RoadContent() {
         </div>
       </ScrollSection>
 
-      <ScrollSection progress={smoothProgress} start={0.60} end={0.82} title="OUR APPROACH">
+      <ScrollSection progress={smoothProgress} start={0.55} end={0.72} title="OUR APPROACH">
          <div className="backdrop-blur-2xl bg-white/[0.02] p-8 md:p-14 rounded-[40px] border border-white/10 shadow-2xl mx-auto max-w-3xl space-y-8 text-left">
              {[
                { n: "1", t: "DISCOVERY", d: "Mapping the optimal technical path before any engineering begins." },
@@ -133,7 +133,7 @@ export default function RoadContent() {
          </div>
       </ScrollSection>
 
-      <ScrollSection progress={smoothProgress} start={0.82} end={1.0} title="COMMENCE BUILD">
+      <ScrollSection progress={smoothProgress} start={0.75} end={1.0} title="COMMENCE BUILD">
         <div className="backdrop-blur-2xl bg-slate-950/40 p-10 md:p-20 rounded-[40px] border border-white/10 shadow-2xl flex flex-col items-center mx-auto max-w-2xl">
           <p className="text-lg md:text-2xl lg:text-3xl font-wide font-bold leading-tight mb-8 text-center uppercase tracking-tighter italic">
              The horizon belongs to <br/><span className="text-blue-400 drop-shadow-md">those who invent it.</span>

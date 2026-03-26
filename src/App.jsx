@@ -24,26 +24,11 @@ function App() {
       window.dispatchEvent(new Event('scroll'));
     }, 10);
 
-    // Apply scroll-snapping to the root HTML element during the road journey
-    if (view === 'ROAD' && activeTemplate === 'client' && !isMobile) {
-      document.documentElement.classList.add('snap-y', 'snap-mandatory');
-    } else {
-      document.documentElement.classList.remove('snap-y', 'snap-mandatory');
-    }
-    
-    return () => document.documentElement.classList.remove('snap-y', 'snap-mandatory');
+    return () => {};
   }, [view, activeTemplate, isMobile]);
 
   return (
-    <div className={`w-full ${(view === 'ROAD' && (activeTemplate === 'client' || activeTemplate === 'premium')) ? 'h-[950vh] snap-y snap-mandatory' : 'h-screen overflow-hidden'} bg-[#020617]`}>
-      {/* 5 Content Snap Points across the 950vh vertical track */}
-      {view === 'ROAD' && activeTemplate === 'client' && (
-        <div className="absolute inset-0 pointer-events-none">
-           {[0, 200, 400, 600, 800, 920].map(vh => (
-             <div key={vh} className="h-screen snap-start" style={{ marginTop: vh === 0 ? 0 : `${vh}vh` }} />
-           ))}
-        </div>
-      )}
+    <div className={`w-full ${(view === 'ROAD' && (activeTemplate === 'client' || activeTemplate === 'premium')) ? 'h-[2000vh]' : 'h-screen overflow-hidden'} bg-[#020617]`}>
       <AnimatePresence mode="wait">
         {activeTemplate === 'client' && (
           <motion.div 
