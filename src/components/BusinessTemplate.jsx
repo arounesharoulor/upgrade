@@ -472,8 +472,24 @@ export default function BusinessTemplate({ activeTemplate, setActiveTemplate, vi
                           READY TO <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#64ffda] to-[#48bfe3]">DOMINATE?</span>
                         </h1>
                         <p className="text-slate-500 text-sm font-sans max-w-md mx-auto mb-12 font-medium">The future belongs to those who build it. Let's engineer your competitive advantage.</p>
-                        <div className="flex flex-col items-center gap-10">
-                          <button onClick={() => setView('CONTACT')} className="px-16 py-6 bg-white text-[#020c1b] font-wide font-bold text-[10px] tracking-[0.3em] uppercase rounded-2xl hover:scale-105 transition-transform">LAUNCH PROJECT</button>
+                        <div className="flex flex-col items-center gap-10 mt-4">
+                          <div className="flex justify-center gap-10">
+                            <button onClick={() => setView('CONTACT')} className="px-16 py-6 bg-white text-[#020c1b] font-wide font-bold text-[10px] tracking-[0.3em] uppercase rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.05)] cursor-pointer">LAUNCH PROJECT</button>
+                          </div>
+                          {/* VISIT AGAIN BUTTON */}
+                          <button 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="group flex flex-col items-center gap-2 transition-all relative z-[100]"
+                          >
+                            <div className="w-12 h-12 border border-[#64ffda] rounded-full bg-[#64ffda]/5 flex items-center justify-center group-hover:bg-[#64ffda] group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(100,255,218,0.15)] group-hover:shadow-[0_0_30px_rgba(100,255,218,0.3)]">
+                                <span className="text-sm text-white rotate-[-90deg] block group-hover:text-[#020c1b] transition-colors">➔</span>
+                            </div>
+                            <span className="text-[10px] font-wide font-bold uppercase tracking-[0.4em] text-[#64ffda] group-hover:text-white transition-colors">Visit Again</span>
+                          </button>
                         </div>
                       </AdvancedSection>
 

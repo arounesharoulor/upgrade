@@ -23,7 +23,7 @@ const pricingPlans = [
 
 export default function OverlayUI({ view, setView, scrollYProgress, activeTemplate, setActiveTemplate }) {
   const isMobile = useIsMobile();
-  const [pad, setPad] = useState(24);
+  const [offsets, setOffsets] = useState({ pad: 24, tweak: 20, cWidth: 1000, cHeight: 800 });
   
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 50,
@@ -32,14 +32,22 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
   });
   
   useEffect(() => {
-    const handleResize = () => setPad(window.innerWidth >= 768 ? 48 : 24);
+    const handleResize = () => {
+      const rem = parseFloat(typeof document !== 'undefined' ? getComputedStyle(document.documentElement).fontSize : '16') || 16;
+      setOffsets({
+        pad: window.innerWidth >= 768 ? 3 * rem : 1.5 * rem,
+        tweak: 1.25 * rem,
+        cWidth: Math.min(window.innerWidth, 1920),
+        cHeight: window.innerHeight
+      });
+    };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const calcX = `calc(50vw - 50% - ${pad}px)`;
-  const calcY = `calc(50vh - 50% - ${pad}px - 20px)`; // Perfectly centered with slight offset upward
+  const calcX = `calc(${offsets.cWidth / 2}px - 50% - ${offsets.pad}px)`;
+  const calcY = `calc(${offsets.cHeight / 2}px - 50% - ${offsets.pad + offsets.tweak}px)`; // Perfectly centered with slight offset upward
   const scrollX = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcX, "0px", "0px", calcX]); 
   const scrollY = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcY, "0px", "0px", calcY]);
   const scrollScale = useTransform(smoothProgress, [0, 0.05, 0.95, 1], [1.3, 1, 1, 1.3]);

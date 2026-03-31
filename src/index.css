@@ -3,6 +3,23 @@
 
 
 @layer base {
+  /* Scale UI seamlessly across major monitor resolutions */
+  @media (max-height: 768px), (max-width: 1280px) { /* HD 1280x720 / Smaller Laptops */
+    html { font-size: 14px; }
+  }
+  @media (min-width: 1360px) and (max-width: 1919px) and (min-height: 769px) { /* Default to Figma base */
+    html { font-size: 16px; }
+  }
+  @media (min-width: 1920px) { /* Full HD */
+    html { font-size: 16px; }
+  }
+  @media (min-width: 2560px) { /* 2K / QHD */
+    html { font-size: 21px; }
+  }
+  @media (min-width: 3840px) { /* 4K */
+    html { font-size: 32px; }
+  }
+
   body {
     @apply m-0 p-0 antialiased overflow-x-hidden text-white;
     background-color: #020617;
