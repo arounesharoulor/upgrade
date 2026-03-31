@@ -23,7 +23,7 @@ const pricingPlans = [
 
 export default function OverlayUI({ view, setView, scrollYProgress, activeTemplate, setActiveTemplate }) {
   const isMobile = useIsMobile();
-  const [offsets, setOffsets] = useState({ pad: 24, tweak: 20, cWidth: 1000, cHeight: 800 });
+  const [offsets, setOffsets] = useState({ pad: 24, tweak: 20 });
   
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 50,
@@ -36,9 +36,7 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
       const rem = parseFloat(typeof document !== 'undefined' ? getComputedStyle(document.documentElement).fontSize : '16') || 16;
       setOffsets({
         pad: window.innerWidth >= 768 ? 3 * rem : 1.5 * rem,
-        tweak: 1.25 * rem,
-        cWidth: Math.min(window.innerWidth, 1920),
-        cHeight: window.innerHeight
+        tweak: 1.25 * rem
       });
     };
     handleResize();
@@ -46,19 +44,28 @@ export default function OverlayUI({ view, setView, scrollYProgress, activeTempla
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const calcX = `calc(${offsets.cWidth / 2}px - 50% - ${offsets.pad}px)`;
-  const calcY = `calc(${offsets.cHeight / 2}px - 50% - ${offsets.pad + offsets.tweak}px)`; // Perfectly centered with slight offset upward
-  const scrollX = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcX, "0px", "0px", calcX]); 
-  const scrollY = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [calcY, "0px", "0px", calcY]);
-  const scrollScale = useTransform(smoothProgress, [0, 0.05, 0.95, 1], [1.3, 1, 1, 1.3]);
-  const alignItems = useTransform(smoothProgress, [0, 0.05, 0.95, 1], ["center", "flex-start", "flex-start", "center"]);
-  const skewX = useTransform(smoothProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], [0, -8, 0, 0, 8, 0]);
-  const blurValue = useTransform(smoothProgress, [0, 0.025, 0.05, 0.95, 0.975, 1], [0, 2, 0, 0, 2, 0]);
+  // Using native CSS math ensures immediate fluid responsiveness and avoids initial JS hydration layout jumps
+  // min(100vw, 1920px) accurately targets the absolute center of the container even if constrained by max-w-[1920px]
+  const calcX = `calc(min(100vw, 1920px) / 2 - 50% - ${offsets.pad}px)`;
+  const calcY = isMobile 
+     ? `calc(35dvh - 50% - ${offsets.pad + offsets.tweak}px)` 
+     : `calc(50vh - 50% - ${offsets.pad + offsets.tweak}px)`; 
+     
+  // Synchronize animation boundaries to prevent awkward mid-scroll layout snapping
+  const snapPoint = isMobile ? 0.05 : 0.08;
+  const snapEnd = 1 - snapPoint;
+
+  const scrollX = useTransform(smoothProgress, [0, snapPoint, snapEnd, 1], [calcX, "0px", "0px", calcX]); 
+  const scrollY = useTransform(smoothProgress, [0, snapPoint, snapEnd, 1], [calcY, "0px", "0px", calcY]);
+  const scrollScale = useTransform(smoothProgress, [0, snapPoint, snapEnd, 1], [isMobile ? 1.15 : 1.3, 1, 1, isMobile ? 1.15 : 1.3]);
+  const alignItems = useTransform(smoothProgress, [0, snapPoint, snapEnd, 1], ["center", "flex-start", "flex-start", "center"]);
+  const skewX = useTransform(smoothProgress, [0, snapPoint / 2, snapPoint, snapEnd, snapEnd + (snapPoint/2), 1], [0, -8, 0, 0, 8, 0]);
+  const blurValue = useTransform(smoothProgress, [0, snapPoint / 2, snapPoint, snapEnd, snapEnd + (snapPoint/2), 1], [0, 2, 0, 0, 2, 0]);
   const textBlur = useTransform(blurValue, (v) => `blur(${Math.max(0, v)}px)`);
-  const textAlign = useTransform(smoothProgress, [0, 0.05, 0.95, 1], ["center", "left", "left", "center"]);
+  const textAlign = useTransform(smoothProgress, [0, snapPoint, snapEnd, 1], ["center", "left", "left", "center"]);
   const h1ScrollColor = useTransform(smoothProgress, [0, 1], ["#ffffff", "#ffffff"]);
   const h2ScrollColor = useTransform(smoothProgress, [0, 1], ["#94a3b8", "#94a3b8"]);
-  const headerGlobalOpacity = useTransform(smoothProgress, [0, 0.05, 0.8, 0.95, 0.98, 1], [1, 1, 1, 0, 0, 1]);
+  const headerGlobalOpacity = useTransform(smoothProgress, [0, snapPoint, 0.8, 0.95, 0.98, 1], [1, 1, 1, 0, 0, 1]);
   const viewAgainOpacity = useTransform(smoothProgress, [0.99, 1], [0, 1]);
 
   return (

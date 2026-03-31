@@ -644,47 +644,107 @@ export default function PremiumTemplate({ view, setView, scrollYProgress, active
               )}
 
               {view === 'PRICING' && (
-                  <motion.div key="pricing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
-                       <div className="w-full max-w-4xl pt-32 md:pt-40 px-4 md:px-0 pb-32">
-                          <h2 className="text-lg md:text-2xl lg:text-3xl font-wide font-bold mb-10 md:mb-16 uppercase italic tracking-tighter">ELITE <span className="text-[#e63946]">VALUE.</span></h2>
-                          <div className="grid gap-4">
-                              {[
-                                { t: "CORE FRAME", p: "₹18,999", d: "Standard high-fidelity portfolio." },
-                                { t: "NEURAL NODE", p: "CUSTOM", d: "Advanced AI web applications." },
-                                { t: "ENTERPRISE GRID", p: "QUOTE", d: "Scalable global architecture." }
-                              ].map((p, i) => (
-                                  <motion.div key={i} className="p-6 md:p-8 bg-white/[0.02] border border-white/5 rounded-[24px] md:rounded-[30px] flex flex-col md:flex-row items-start md:items-center justify-between group hover:border-[#e63946]/50 transition-all cursor-pointer gap-4 md:gap-0" onClick={() => window.open(`https://wa.me/918825802060`)}>
-                                      <div className="text-left">
-                                          <h3 className="text-xl md:text-2xl font-wide font-bold uppercase group-hover:text-[#e63946] transition-colors tracking-tighter">{p.t}</h3>
-                                          <p className="text-slate-500 mt-1 text-xs md:text-sm font-sans">{p.d}</p>
-                                      </div>
-                                      <div className="text-right">
-                                          <div className="text-2xl font-wide font-bold text-white mb-1">{p.p}</div>
-                                          <div className="text-[9px] uppercase tracking-widest font-wide font-bold text-[#e63946]">Initialize Plan</div>
-                                      </div>
-                                  </motion.div>
-                              ))}
-                          </div>
-                       </div>
-                  </motion.div>
+                <motion.div 
+                    key="pricing"
+                    initial={{ opacity: 0, y: 30 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    exit={{ opacity: 0, y: -30 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute inset-0 z-50 w-full h-full flex flex-col pointer-events-auto pt-32 md:pt-40 px-6 md:px-12 pb-24 overflow-y-auto hide-scrollbar bg-[#020308]/60 backdrop-blur-md items-center"
+                >
+                  <div className="w-full max-w-6xl">
+                    <div className="mb-8 md:mb-10 w-full">
+                        <h3 className="text-[#e63946] font-wide font-bold text-lg md:text-2xl lg:text-3xl mb-4 tracking-tighter uppercase italic">MODULAR PRICING TIERS</h3>
+                        <p className="text-sm md:text-base font-sans text-slate-300 max-w-4xl leading-relaxed font-medium">
+                            Whether you need a high-impact presence or a massive database-driven platform intertwined with an enterprise LLM, we deliver uncompromising quality at fair prices. Every plan is meticulously engineered and includes post-launch technical support.
+                        </p>
+                    </div>
+
+                    <div className="border-t border-white/20 mb-12">
+                        {[
+                            { title: "CORE FRAME", price: "₹18,999", desc: "Standard high-fidelity portfolio." },
+                            { title: "NEURAL NODE", price: "CUSTOM", desc: "Advanced AI web applications." },
+                            { title: "ENTERPRISE GRID", price: "QUOTE", desc: "Scalable global architecture." }
+                        ].map((p, i) => (
+                            <div key={i} onClick={() => window.open(`https://wa.me/918825802060?text=I'm%20interested%20in%20estimating%20the%20${encodeURIComponent(p.title)}`, '_blank')} className="py-8 border-b border-white/20 flex flex-col md:flex-row md:justify-between md:items-center hover:bg-white/5 transition duration-300 cursor-pointer group px-4 rounded-xl">
+                                <div className="flex flex-col md:w-[70%]">
+                                    <span className="font-wide font-bold text-lg md:text-xl lg:text-2xl group-hover:pl-4 transition-all duration-300 group-hover:text-[#e63946] text-white uppercase italic tracking-tighter">{p.title}</span>
+                                    <span className="text-sm font-sans text-slate-400 mt-2 leading-relaxed font-medium">{p.desc}</span>
+                                </div>
+                                <span className="font-wide font-bold text-base md:text-lg lg:text-xl mt-4 md:mt-0 text-[#e63946] md:text-right whitespace-nowrap">{p.price}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm font-sans">
+                        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-[#e63946]/20 shadow-xl group hover:border-[#e63946]/50 transition-colors">
+                            <strong className="block text-white mb-2 text-base font-wide">TECH STACK</strong>
+                            <span className="text-slate-300">We exclusively deploy on modern, highly-scalable stacks including Next.js, React, Node.js, Python, PostgreSQL, and Vercel/AWS infrastructures.</span>
+                        </div>
+                        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-[#e63946]/20 shadow-xl group hover:border-[#e63946]/50 transition-colors">
+                            <strong className="block text-white mb-2 text-base font-wide">DELIVERY TIMES</strong>
+                            <span className="text-slate-300">Static builds typically launch within 1–2 weeks. Bespoke web applications and AI tools map dynamically based on functional complexity constraints.</span>
+                        </div>
+                        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-[#e63946]/20 shadow-xl group hover:border-[#e63946]/50 transition-colors">
+                            <strong className="block text-white mb-2 text-base font-wide">MAINTENANCE</strong>
+                            <span className="text-slate-300">Custom Retainer Models available for persistent system updates, continuous AI model tuning, security patching, and server monitoring.</span>
+                        </div>
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
               {view === 'CONTACT' && (
-                  <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 flex items-start justify-center p-4 md:p-8 bg-[#020308]/40 backdrop-blur-md overflow-y-auto w-full hide-scrollbar">
-                       <div className="text-center px-4 w-full pt-32 md:pt-40 pb-32">
-                           <h2 className="text-lg md:text-2xl lg:text-3xl font-wide font-bold mb-10 md:mb-16 uppercase italic tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-tr from-[#ff8e3c] to-[#e63946]">SECURE <br/> LINK.</h2>
-                           <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center">
-                               <a href="https://wa.me/918825802060" className="p-8 md:p-12 border border-white/5 bg-white/[0.01] rounded-[30px] md:rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
-                                   <span className="text-4xl md:text-5xl mb-4 block group-hover:scale-110 transition-transform">💬</span>
-                                   <span className="text-[8px] md:text-[9px] font-wide font-bold uppercase tracking-[0.3em] text-slate-500">Wireless Protocol</span>
-                               </a>
-                               <a href="mailto:admin@upgradewithaifolks.com" className="p-8 md:p-12 border border-white/5 bg-white/[0.01] rounded-[30px] md:rounded-[40px] hover:border-[#e63946] transition-all group flex flex-col items-center">
-                                   <span className="text-4xl md:text-5xl mb-4 block group-hover:scale-110 transition-transform">📧</span>
-                                   <span className="text-[8px] md:text-[9px] font-wide font-bold uppercase tracking-[0.3em] text-slate-500">Secure Inquiry</span>
-                               </a>
-                           </div>
-                       </div>
-                  </motion.div>
+                <motion.div 
+                    key="contact"
+                    initial={{ opacity: 0, scale: 0.95 }} 
+                    animate={{ opacity: 1, scale: 1 }} 
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute inset-0 z-50 w-full h-full flex flex-col pointer-events-auto pt-32 md:pt-40 px-6 md:px-12 pb-24 overflow-y-auto hide-scrollbar bg-[#020308]/60 backdrop-blur-md items-center"
+                >
+                  <div className="w-full max-w-5xl flex flex-col items-center">
+                    <div className="text-center w-full mb-10 md:mb-12">
+                        <h3 className="text-[#e63946] font-wide font-bold text-lg md:text-2xl lg:text-3xl tracking-tighter mb-6 uppercase italic">INITIATE CONTACT</h3>
+                        <p className="text-sm md:text-base leading-relaxed text-slate-200 font-sans font-medium">
+                        Ready to disrupt your industry vertical? Reach out to our engineering team to construct your next <span className="text-[#e63946] font-bold">game-changing application.</span>
+                        </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mb-16">
+                        <div className="backdrop-blur-md bg-white/5 p-10 rounded-3xl border border-[#e63946]/20 flex flex-col items-center justify-center hover:bg-[#e63946]/10 transition-colors text-center w-full shadow-[0_0_30px_rgba(230,57,70,0.05)] text-white">
+                            <h4 className="font-wide font-bold text-xl mb-3 tracking-widest text-[#e63946]">DIRECT LINE</h4>
+                            <p className="font-sans text-slate-300 text-base mb-8 max-w-[280px]">The absolute fastest method for acquiring rough project estimations. Available for rapid brainstorming logic and high-level consultation.</p>
+                            <a href="https://wa.me/918825802060" target="_blank" rel="noreferrer" className="w-full py-5 bg-[#e63946]/10 text-[#e63946] rounded-full font-wide font-bold text-sm hover:bg-[#e63946] hover:text-[#020308] transition-all duration-300 tracking-widest shadow-xl border border-[#e63946]/30 hover:shadow-[0_0_30px_rgba(230,57,70,0.3)]">
+                            WHATSAPP / +918825802060
+                            </a>
+                        </div>
+                        <div className="backdrop-blur-md bg-white/5 p-10 rounded-3xl border border-[#e63946]/20 flex flex-col items-center justify-center hover:bg-[#e63946]/10 transition-colors text-center w-full shadow-[0_0_30px_rgba(230,57,70,0.05)] text-white">
+                            <div className="text-5xl mb-6">📧</div>
+                            <h4 className="font-wide font-bold text-xl mb-3 tracking-widest text-[#e63946]">BUSINESS INQUIRY</h4>
+                            <p className="font-sans text-slate-300 text-base mb-8 max-w-[280px]">Transmit your formal Request for Proposal (RFP) or deep technical scope details. Expect a clinically detailed response within 24 hours.</p>
+                            <a href="mailto:admin@upgradewithaifolks.com" className="w-full py-5 border-2 border-[#e63946]/30 text-[#e63946] bg-transparent rounded-full font-wide font-bold text-[11px] hover:bg-[#e63946] hover:border-[#e63946] hover:text-[#020308] transition-all duration-300 tracking-[0.2em] overflow-hidden whitespace-nowrap shadow-xl hover:shadow-[0_0_30px_rgba(230,57,70,0.3)]">
+                            ADMIN@UPGRADEWITHAIFOLKS.COM
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-sm font-sans text-slate-200 w-full max-w-4xl pt-8 border-t border-[#e63946]/20 text-white">
+                        <div className="flex flex-col items-center">
+                            <strong className="text-white block mb-2 font-wide text-base">GLOBAL REACH</strong>
+                            <span className="text-base text-slate-400">Servicing diverse clients worldwide through highly calibrated asynchronous workflows.</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <strong className="text-white block mb-2 font-wide text-base">OPERATING BOUNDS</strong>
+                            <span className="text-base text-slate-400">Monday - Friday<br/>09:00 - 19:00 IST<br/>Weekend Emergency Retainers.</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <strong className="text-white block mb-2 font-wide text-base">HEADQUARTERS</strong>
+                            <span className="text-base text-slate-400">Chennai, Tamil Nadu, India<br/>100% Remote Deployment Capacity.</span>
+                        </div>
+                    </div>
+                  </div>
+                </motion.div>
               )}
           </AnimatePresence>
       </div>
